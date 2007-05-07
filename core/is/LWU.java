@@ -2,7 +2,7 @@
  * LWU.java
  *
  * 26th may 2006
- * Instruction LWU of the MIPS64 Instruction  Set
+ * Instruction LWU of the MIPS64 Instruction Set
  * (c) 2006 EduMips64 project - Trubia Massimo, Russo Daniele
  *
  * This file is part of the EduMIPS64 project, and is released under the GNU

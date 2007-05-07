@@ -1,8 +1,8 @@
-<project name="edumips64" default="svnjar" basedir=".">
+<project name="edumips64" default="jar" basedir=".">
 	<target name="init">
 		<property name="sourceDir" value="." />
         <property name="helpClassesDir" value="./javahelp_classes" />
-		<property name="version" value="0.4.1" />
+		<property name="version" value="0.4.3" />
 		<property name="outputDir" value="edumips" />
 		<property name="jarFile" value="edumips64-${version}.jar" />
 		<property name="svnJarFile" value="edumips64-svn.jar" />

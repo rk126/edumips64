@@ -20,6 +20,11 @@ Descrizione: rt = rs AND immediato
             L'immediato a 16 bit "is zero-extended to the left" e successivamente
             viene effettuato l'AND bit a bit. Il risultato viene memorizzato nel 
             registro rt.
+
+Istruzione B
+
+Sintassi: B offset
+Descrizione: Effettua un salto incondizionato ad offset
             
 Istruzione BEQ 
 
@@ -32,6 +37,12 @@ Istruzione BEQZ
 Sintassi: BEQZ rs, offset
 Descrizione: if rs == 0 then branch
             Verifica il valore di un GPR ed effettua un salto condizionale.
+
+Istruzione BGEZ
+
+Sintassi: BGEZ rs, offset
+Descrizione: if rs >= 0 then branch
+            Se rs >= 0, effettua un salto relativo al PC ad offset.
              
 Istruzione BNE 
 
@@ -66,9 +77,9 @@ Descrizione: rd = rs + rt
             il risultato e' memorizzato nel registro rd.
             Non si verificano eccezioni di overflow.
             
-Istruzione DADDUI 
+Istruzione DADDIU 
 
-Sintassi: DADDUI rt, rs, immediate
+Sintassi: DADDIU rt, rs, immediate
 Descrizione: 
             Somma una costante ad un registro a 64 bit.
             L'immediato con segno e' sommato al valore a 64 bit del GPR rs,
@@ -85,6 +96,17 @@ Descrizione: (LO, HI) = rs / rt
             Il quoziente ed il resto a 64 bit sono memorizzati rispettivamente,
             nei registri speciali LO ed HI.
             Non si verificano eccezioni di aritmetiche.
+
+Istruzione DDIVU
+
+Sintassi: DDIVU rs, rt
+Descrizione: (LO, HI) = rs / rt
+            Effettua la divisione tra due interi a 64 bit.
+            Divide il valore a 64 bit del registro rs con quello nel registro rt,
+            considerando entrambi gli operandi come valori senza segno.
+            Il quoziente ed il resto a 64 bit sono memorizzati rispettivamente,
+            nei registri speciali LO ed HI.
+            Non si verificano eccezioni di aritmetiche.
             
 Istruzione DMULT 
 
@@ -93,6 +115,14 @@ Descrizione: (LO) = rs * rt
             Moltiplica due interi con segno a 64 bit.
             Il valore nel registro rt e' moltiplicato per il valore in rs,
             considerando entrambi gli operandi come valori con segno.
+
+Istruzione DMULTU
+
+Sintassi: DMULTU rs, rt
+Descrizione: (LO) = rs * rt
+            Moltiplica due interi con segno a 64 bit.
+            Il valore nel registro rt e' moltiplicato per il valore in rs,
+            considerando entrambi gli operandi come valori senza segno.
            
 Istruzione DSLL 
 
@@ -216,19 +246,6 @@ Sintassi: LD rt, offset(base)
 Descrizione: rt = memory[base+offset]
             Carica una doubleword dalla memoria.
             
-Istruzione LH 
-
-Sintassi: LH rt, offset(base)
-Descrizione: rt = memory[base+offset]
-            Carica un'halfword dalla memoria come valore con segno.
-            
-Istruzione LHU 
-            
-Sintassi: LHU rt, offset(base)
-Descrizione:  rt = memory[base+offset]    
-            Carica un'halfword dalla memoria come valore senza segno.
-Istruzione LH 
-
 Sintassi: LH rt, offset(base)
 Descrizione: rt = memory[base+offset]
             Carica una halfword dalla memoria come valore con segno.

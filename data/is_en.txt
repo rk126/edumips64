@@ -24,6 +24,11 @@ Description: rt = rs AND immediate
             with the contents of GPR rs in a bitwise logical AND
             operation. The result is placed into GPR rt.
             
+B Instruction
+
+Syntax: B offset
+Description: Jumps inconditionally to offset
+
 BEQ Instruction
 
 Syntax: BEQ rs, rt, offset
@@ -32,10 +37,16 @@ Description: if rs = rt then branch
             
 BEQZ Instruction
 
-Syntax: BNEZ rs, offset
+Syntax: BEQZ rs, offset
 Description: if rs == 0 then branch
             To test a GPR then do a PC-relative conditional branch
              
+BGEZ Instruction
+
+Syntax: BGEZ rs, offset
+Description: if rs >= 0 then branch
+            Does a PC-relative branch to offset if rs >= 0
+
 BNE Instruction
 
 Syntax: BNE rt, rs, immediate
@@ -69,9 +80,9 @@ Description: rd = rs + rt
   		    in GPR rs and the 64-bit arithmetic result is placed into GPR rd.
   		    No Integer Overflow exception occurs under any circumstances.
             
-DADDUI Instruction
+DADDIU Instruction
 
-Syntax: DADDUI rt, rs, immediate
+Syntax: DADDIU rt, rs, immediate
 Description: 
             To add a constant to a 64-bit integer
             The 16-bit signed immediate is added to the 64-bit value 
@@ -88,6 +99,17 @@ Description: (LO, HI) = rs / rt
             The 64-bit quotient is placed into special register LO and the 
             64-bit remainder is placed into special register HI.
             No arithmetic exception occurs under any circumstances.
+
+DDIVU Instruction
+
+Syntax: DDIVU rs, rt
+Description: (LO, HI) = rs / rt
+            To divide 64-bit signed integers
+            The 64-bit doubleword in GPR rs is divided by the 64-bit 
+            doubleword in GPR rt, treating both operands as unsigned values.
+            The 64-bit quotient is placed into special register LO and the 
+            64-bit remainder is placed into special register HI.
+            No arithmetic exception occurs under any circumstances.
             
 DMULT Instruction
 
@@ -96,12 +118,20 @@ Description: (LO) = rs * rt
            To divide 64-bit signed integers
            The 64-bit doubleword value in GPR rt is multiplied by the 64-bit 
            value in GPR rs, treating both operands as signed values.
+
+DMULTU Instruction
+
+Syntax: DMULTU rs, rt
+Description: (LO) = rs * rt
+           To divide 64-bit signed integers
+           The 64-bit doubleword value in GPR rt is multiplied by the 64-bit 
+           value in GPR rs, treating both operands as unsigned values.
            
 DSLL Instruction
 
 Syntax: DSLL rd, rt, sa Doubleword shift left logical
 Description: 
-            To execute a left-shift of a doubleword by a fixed amount—0 to 31 bits
+            To execute a left-shift of a doubleword by a fixed amount 0 to 31 bits
             The 64-bit doubleword contents of GPR rt are shifted left, 
             inserting zeros into the emptied bits; the result is placed in GPR rd. 
             The bit-shift amount in the range 0 to 31 is specified by sa.

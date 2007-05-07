@@ -1,9 +1,8 @@
 /*
- * DMULT.java
- *
- * 02th june 2006
+ * DMULTU.java
+ * 
  * Instruction DMULT of the MIPS64 Instruction Set
- * (c) 2006 EduMips64 project - Trubia Massimo, Russo Daniele
+ * (c) 2006 EduMips64 project - Andrea Milazzo (Mancausoft)
  *
  * This file is part of the EduMIPS64 project, and is released under the GNU
  * General Public License.
@@ -34,16 +33,16 @@ import java.util.*;
 
 /**
  * <pre>
- *      Syntax: DMULT rs, rt
- * Description: (LO) = rs * rt
- *              To multiply 64-bit signed integers
+ *      Syntax: DMULTU rs, rt
+ * Description: (HI)(LO) = rs * rt
+ *              To multiply 64-bit unsigned integers
  *              The 64-bit doubleword value in GPR rt is multiplied by the 64-bit 
- *              value in GPR rs, treating both operands as signed values.
+ *              value in GPR rs.
  * </pre>
  * 
- * @author Trubia Massimo, Russo Daniele
+ * @author Andrea Milazzo (Mancausoft)
  */
-class DMULT extends ALU_RType
+class DMULTU extends ALU_RType
 {
     final int RS_FIELD=0;
     final int RT_FIELD=1;
@@ -52,11 +51,11 @@ class DMULT extends ALU_RType
     String lo;
     String hi;
     
-	public DMULT()
+	public DMULTU()
 	{
 		super.OPCODE_VALUE = OPCODE_VALUE;
 		syntax="%R,%R";
-		name="DMULT";
+		name="DMULTU";
 	}
     public void ID() throws RAWException, IrregularWriteOperationException, IrregularStringOfBitsException {
         //if source registers are valid passing their own values into temporary registers
@@ -75,22 +74,13 @@ class DMULT extends ALU_RType
 	{
 
 		//getting values from temporary registers
-		boolean sign;
-		BigInteger rs = new BigInteger(Long.toString(TR[RS_FIELD].getValue()));
-		BigInteger rt = new BigInteger(Long.toString(TR[RT_FIELD].getValue()));
+		BigInteger rs = new BigInteger(TR[RS_FIELD].getHexString(),16);
+		BigInteger rt = new BigInteger(TR[RT_FIELD].getHexString(),16);
 		BigInteger result= rs.multiply(rt);
 		
 		// Convert result to a String of 128-bit 
 		String tmp = result.toString(2);
-		if (tmp.charAt(0) =='-')
-		{
-		    tmp = tmp.substring(1);
-		    tmp = Converter.twoComplement(tmp);
-		    while (tmp.length()<128)
-			tmp = "1" + tmp;
-		}
-		else
-		    while (tmp.length()<128)
+		while (tmp.length()<128)
 			tmp = "0" + tmp;
 		
 		hi = tmp.substring(0,64);
@@ -131,7 +121,7 @@ class DMULT extends ALU_RType
 
 	public static void main(String[] args)
 	{
-		DMULT ins=new DMULT();
+		DMULTU ins=new DMULTU();
 		List<Integer>params=new Vector<Integer>();
 		int rs=1;
 		int rt=2;
