@@ -189,7 +189,7 @@ public class Main extends JApplet {
 		}
 	System.out.println(cpu.fprString());
 	*/
-	
+	/*
 	        //DEBUGGING FPPipeline
 		try{
 		Instruction ins1=Instruction.buildInstruction("ADD.D");
@@ -236,7 +236,7 @@ public class Main extends JApplet {
 		catch(Exception e)
 		{ e.printStackTrace();}
 
-	
+	*/
     }
 
     private static void addFrame(String name, JInternalFrame f) {

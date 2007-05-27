@@ -74,6 +74,7 @@ public class GUIRegisters extends GUIComponent
 	
 	public void update() 
 	{
+/*
 //DEBUG: writing test on FPR 0
 	CPU cpu=CPU.getInstance();
 	cpu.setFPExceptions(CPU.FPExceptions.OVERFLOW,false);
@@ -92,9 +93,7 @@ public class GUIRegisters extends GUIComponent
 		}
 		System.out.println(cpu.fprString());
 // fine debug	
-		
-		
-		
+*/		
 		registers = cpu.getRegisters();
 		registersFP=cpu.getRegistersFP();
 		for (int i = 0; i < 32; i++) {
