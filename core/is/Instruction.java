@@ -76,6 +76,9 @@ public abstract class Instruction {
      */
      public static Instruction buildInstruction(String name){
         Instruction returnedObject=null;
+	//If the name of the requested instruction has got a dot, the istruction is FP and an
+	//underscore takes the place of the dot because classes names cannot contain dots
+	name=name.replaceAll("\\.","_");
 	for (InstructionEnumerator op : InstructionEnumerator.values())
 	{
 	    if (op.name().equals(name)==true)
@@ -84,6 +87,7 @@ public abstract class Instruction {
                 return returnedObject;
 	    }
         }
+	
         return returnedObject;
     }
     public enum InstructionEnumerator {
@@ -156,8 +160,10 @@ public abstract class Instruction {
                         HALT  { Instruction getObject() {HALT newObject=new HALT(); return newObject; } },
                         TRAP  { Instruction getObject() {TRAP newObject=new TRAP(); return newObject; } },
                         SYSCALL  { Instruction getObject() {SYSCALL newObject=new SYSCALL(); return newObject; } },
-                        BREAK  { Instruction getObject() {BREAK newObject=new BREAK(); return newObject; } };
-                      
+                        BREAK  { Instruction getObject() {BREAK newObject=new BREAK(); return newObject; } },
+			//Floating point instructions
+			            ADD_D {Instruction getObject() {ADD_D newObject=new ADD_D(); return newObject; } },
+			            MUL_D { Instruction getObject() {MUL_D newObject=new MUL_D();return newObject;}};
 
 		abstract Instruction getObject();
     }
