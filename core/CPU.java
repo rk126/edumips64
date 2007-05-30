@@ -22,6 +22,10 @@
  */
 
 package edumips64.core;
+import edumips64.core.fpu.FPExponentTooLargeException;
+import edumips64.core.fpu.FPInvalidOperationException;
+import edumips64.core.fpu.FPOverflowException;
+import edumips64.core.fpu.FPUnderflowException;
 import java.util.*;
 import edumips64.core.is.*;
 import edumips64.utils.*;
@@ -123,6 +127,7 @@ public class CPU
 		currentPipeStatus = PipeStatus.IF;
 		
 //FPU
+		
 		//FPU initialization
 		fpEnabledExceptions=new HashMap<FPExceptions,Boolean>();
 		fpEnabledExceptions.put(FPExceptions.DIVISION_BY_ZERO,true);
@@ -252,7 +257,7 @@ public class CPU
     /** This method performs a single pipeline step
     * @throw RAWHazardException when a RAW hazard is detected
     */
-    public void step() throws IntegerOverflowException, AddressErrorException, HaltException, IrregularWriteOperationException, StoppedCPUException, MemoryElementNotFoundException, IrregularStringOfBitsException, TwosComplementSumException, SynchronousException, BreakException
+    public void step() throws IntegerOverflowException, AddressErrorException, HaltException, IrregularWriteOperationException, StoppedCPUException, MemoryElementNotFoundException, IrregularStringOfBitsException, TwosComplementSumException, SynchronousException, BreakException, FPInvalidOperationException, FPExponentTooLargeException, FPUnderflowException, FPOverflowException
 	{
 		/* The integer "breaking" is used to keep track of the BREAK
 		 * instruction. When the BREAK instruction enters ID, the BreakException
@@ -270,7 +275,7 @@ public class CPU
 			throw new StoppedCPUException();
 		try
 		{
-			Main.logger.debug("Starting cycle " + ++cycles);
+		Main.logger.debug("Starting cycle " + ++cycles);
 			currentPipeStatus = PipeStatus.WB; 
 
 			// Let's execute the WB() method of the instruction located in the 
