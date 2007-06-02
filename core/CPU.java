@@ -22,10 +22,7 @@
  */
 
 package edumips64.core;
-import edumips64.core.fpu.FPExponentTooLargeException;
-import edumips64.core.fpu.FPInvalidOperationException;
-import edumips64.core.fpu.FPOverflowException;
-import edumips64.core.fpu.FPUnderflowException;
+import edumips64.core.fpu.*;
 import java.util.*;
 import edumips64.core.is.*;
 import edumips64.utils.*;
@@ -40,7 +37,7 @@ public class CPU
 	private Register[] gpr;
     /** FPU Elements*/	
 	private RegisterFP[] fpr;
-	public enum FPExceptions {INVALID_OPERATION,DIVISION_BY_ZERO,UNDERFLOW,OVERFLOW};
+	public enum FPExceptions {INVALID_OPERATION,DIVIDE_BY_ZERO,UNDERFLOW,OVERFLOW};
 	private Map<FPExceptions,Boolean> fpEnabledExceptions;
 	public static List<String> knownFPInstructions;
 
@@ -130,7 +127,7 @@ public class CPU
 		
 		//FPU initialization
 		fpEnabledExceptions=new HashMap<FPExceptions,Boolean>();
-		fpEnabledExceptions.put(FPExceptions.DIVISION_BY_ZERO,true);
+		fpEnabledExceptions.put(FPExceptions.DIVIDE_BY_ZERO,true);
 		fpEnabledExceptions.put(FPExceptions.INVALID_OPERATION,true);
 		fpEnabledExceptions.put(FPExceptions.OVERFLOW,true);
 		fpEnabledExceptions.put(FPExceptions.UNDERFLOW,true);
@@ -257,7 +254,7 @@ public class CPU
     /** This method performs a single pipeline step
     * @throw RAWHazardException when a RAW hazard is detected
     */
-    public void step() throws IntegerOverflowException, AddressErrorException, HaltException, IrregularWriteOperationException, StoppedCPUException, MemoryElementNotFoundException, IrregularStringOfBitsException, TwosComplementSumException, SynchronousException, BreakException, FPInvalidOperationException, FPExponentTooLargeException, FPUnderflowException, FPOverflowException
+    public void step() throws IntegerOverflowException, AddressErrorException, HaltException, IrregularWriteOperationException, StoppedCPUException, MemoryElementNotFoundException, IrregularStringOfBitsException, TwosComplementSumException, SynchronousException, BreakException, FPInvalidOperationException, FPExponentTooLargeException, FPUnderflowException, FPOverflowException, FPDivideByZeroException
 	{
 		/* The integer "breaking" is used to keep track of the BREAK
 		 * instruction. When the BREAK instruction enters ID, the BreakException
