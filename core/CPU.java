@@ -408,7 +408,7 @@ public class CPU
 				}
 			}
 			pipe.put(PipeStatus.MEM, instr);
-			pipe.put(PipeStatus.EX,null);			
+			//pipe.put(PipeStatus.EX,null);			
 		}
 			
 		//shifting instructions in the fpPipe
@@ -440,7 +440,7 @@ public class CPU
 					}
 				}
 				//if an integer instruction or an FP instruction that will not pass through the FP pipeline fills the ID stage a checking for
-				//InputStructuralStall (second type) must be performed. We must control if the EX stage is filled by another instruction
+				//InputStructuralStall (second type) must be performed. We must control if the EX stage is filled by another instruction, in this case we have to raise a stall
 				else
 				{
 					if(pipe.get(PipeStatus.EX)==null)
@@ -450,10 +450,13 @@ public class CPU
 						pipe.put(PipeStatus.EX,pipe.get(PipeStatus.ID));
 						pipe.put(PipeStatus.ID,null);	
 					}
-					else// the EX stage is filled by another instruction
+	//caso in cui EX è occupata	
+					else
 					{
-						throw new MemoryNotAvailableException();
+						throw new EXNotAvailableException();
 					}
+					
+	
 				}
 				
 			}
@@ -549,6 +552,12 @@ public class CPU
 			if(syncex != null)
 				throw new SynchronousException(syncex);
 		}
+		catch(EXNotAvailableException ex)
+		{
+			if(syncex != null)
+				throw new SynchronousException(syncex);			
+		}
+		
 		catch(SynchronousException ex) {
 			edumips64.Main.logger.exception(ex.getCode());
 			throw ex;
@@ -610,6 +619,7 @@ public class CPU
 		cycles = 0;
 		instructions = 0;
 		RAWStalls = 0;
+		WAWStalls = 0;
 		dividerStalls = 0;
 		funcUnitStalls = 0;
 		memoryStalls = 0; 
