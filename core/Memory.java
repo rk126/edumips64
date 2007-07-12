@@ -39,6 +39,7 @@ public class Memory{
 
 	private int instr_num;
 	private static Memory memory = null;
+	private static CPU cpu;
 	
 	private Memory(){
 		edumips64.Main.logger.debug("Building Memory: " + this.hashCode());

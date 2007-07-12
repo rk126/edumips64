@@ -26,6 +26,8 @@ import edumips64.core.fpu.*;
 import java.util.*;
 import edumips64.core.is.*;
 import edumips64.utils.*;
+
+//debug
 import edumips64.Main;
 
 /** This class models a MIPS CPU with 32 64-bit General Purpose Registers.
@@ -42,6 +44,7 @@ public class CPU
 	public static List<String> knownFPInstructions; // set of Floating point instructions that must pass through the FPU pipeline
 	private FPPipeline fpPipe;
 	private List<String> terminatingInstructionsOPCodes;
+	private long serialNumberSeed; //is used for numerating instructions so that they are unambiguous in the pipelines
 
     /** Program Counter*/
 	private Register pc,old_pc;
@@ -85,7 +88,7 @@ public class CPU
 	private static CPU cpu;
 
 	/** Statistics */
-	private int cycles, instructions, RAWStalls, WAWStalls, dividerStalls,funcUnitStalls,memoryStalls; 
+	private int cycles, instructions, RAWStalls, WAWStalls, dividerStalls,funcUnitStalls,memoryStalls,exStalls; 
 
 	/** Static initializer */
 	static {
@@ -93,8 +96,10 @@ public class CPU
 	}
 	private CPU()
 	{
+		//instructions enumerating
+		serialNumberSeed=0;
 		// To avoid future singleton problems
-		Instruction dummy = Instruction.buildInstruction("BUBBLE");
+//		Instruction dummy = Instruction.buildInstruction("BUBBLE");
 
 		edumips64.Main.logger.debug("Creating the CPU...");
 		cycles = 0;
@@ -121,6 +126,7 @@ public class CPU
 			fpr[i]=new RegisterFP();
 		fpPipe= new FPPipeline();
 		fpPipe.reset();
+		
 
 		// Pipeline initialization
 		pipe = new HashMap<PipeStatus, Instruction>();
@@ -228,6 +234,19 @@ public class CPU
 	   return fpPipe.isFuncUnitFilled(funcUnit, stage);
     }
     
+/** Returns the instruction of the specified functional unit , null if it is empty.
+ *  No controls are carried out on the legality of parameters, for mistaken parameters null is returned
+ *  @param funcUnit The functional unit to check. Legal values are "ADDER", "MULTIPLIER", "DIVIDER"
+ *  @param stage The integer that refers to the stage of the functional unit. 
+ *			ADDER [1,4], MULTIPLIER [1,7], DIVIDER [any] */
+	
+	public Instruction getInstructionByFuncUnit(String funcUnit, int stage)
+	{
+		return fpPipe.getInstructionByFuncUnit(funcUnit,stage);
+	}
+    
+    
+    
     public int getDividerCounter()
     {
 	    return fpPipe.getDividerCounter();
@@ -279,8 +298,62 @@ public class CPU
 	public int getStructuralStallsMemory(){
 		return memoryStalls;
 	}
-	
 
+	/** Returns the number of Structural Stalls (EX not available) that happened inside the pipeline
+	 * @ return an integer
+	 */
+	public int getStructuralStallsEX(){
+		return exStalls;
+	}
+	
+	/** Returns the number of Structural Stalls (FP Adder and FP Multiplier not available) that happened inside the pipeline
+	 * @ return an integer
+	 */
+	public int getStructuralStallsFuncUnit(){
+		return funcUnitStalls;
+	}
+
+	
+	/** Returns a legal serial number in order to numerate a new instruction
+	 */
+	public long getSerialNumber(){ 
+		serialNumberSeed++;
+		return serialNumberSeed-1;
+	}
+
+	/** Returns the stage's name of the instruction passed as serialNumber between this values
+	 *  ID,EX,MEM,WB, A1,A2,A3,A4,M1,M2,M3,M4,M5,M6,M7,DIVXX in which XX means the FP Divider Counter*/
+	public String getInstructionStage(long serialNumber)
+	{
+		String stage;
+		Instruction instr;
+		if((instr=pipe.get(PipeStatus.IF))!=null)
+			if(instr.getSerialNumber()==serialNumber)
+				return "IF";
+		else if((instr=pipe.get(PipeStatus.ID))!=null)
+			if(instr.getSerialNumber()==serialNumber)
+				return "ID";
+		else if((instr=pipe.get(PipeStatus.EX))!=null)
+			if(instr.getSerialNumber()==serialNumber)
+				return "EX";
+		else if((instr=pipe.get(PipeStatus.MEM))!=null)
+			if(instr.getSerialNumber()==serialNumber)
+				return "MEM";
+		else if((instr=pipe.get(PipeStatus.WB))!=null)
+			if(instr.getSerialNumber()==serialNumber)
+				return "WB";
+		//checking for FP pipe
+		else return fpPipe.getInstructionStage(serialNumber);
+		return null;
+	}
+
+	/** Gets the stage's name of the instruction passed as serialNumber between this values
+	 * A1,A2,A3,A4,M1,M2,M3,M4,M5,M6,M7,DIVXX in which XX means the FP Divider Counter.
+	 * If the fpPipe doesn't contain that instruction null is returned*/
+	public String getFPInstructionStage(long serialNumber)
+	{
+		return fpPipe.getInstructionStage(serialNumber);
+	}
 	
 //FPU methods	
 	/** Sets the floating point unit enabled exceptions
@@ -309,10 +382,10 @@ public class CPU
 		 * is thrown. We continue the normal cpu step flow, and at the end of
 		 * this flow the BreakException is re-thrown.
 		 */
+	    
 		boolean SIMUL_MODE_ENABLED=true;
 		boolean SIMUL_MODE_DISABLED=false;
 		int breaking = 0;
-
 		// Used for exception handling
 		boolean masked = (Boolean)Config.get("syncexc-masked");
 		boolean terminate = (Boolean)Config.get("syncexc-terminate");
@@ -426,7 +499,7 @@ public class CPU
 					//the fu is free
 					if(fpPipe.putInstruction(pipe.get(PipeStatus.ID),SIMUL_MODE_ENABLED)==0)
 					{
-						if(fpPipe.isEmpty() || (!fpPipe.isEmpty() && !terminatingInstructionsOPCodes.contains(pipe.get(PipeStatus.ID).getRepr().getHexString())))
+						if(fpPipe.isEmpty() || (!fpPipe.isEmpty()/* && !terminatingInstructionsOPCodes.contains(pipe.get(PipeStatus.ID).getRepr().getHexString())*/))
 							pipe.get(PipeStatus.ID).ID();
 						fpPipe.putInstruction(pipe.get(PipeStatus.ID),SIMUL_MODE_DISABLED);
 						pipe.put(PipeStatus.ID,null);
@@ -445,7 +518,7 @@ public class CPU
 				{
 					if(pipe.get(PipeStatus.EX)==null)
 					{
-						if(fpPipe.isEmpty() || (!fpPipe.isEmpty() && !terminatingInstructionsOPCodes.contains(pipe.get(PipeStatus.ID).getRepr().getHexString())))
+						if(fpPipe.isEmpty() || (!fpPipe.isEmpty()/* && !terminatingInstructionsOPCodes.contains(pipe.get(PipeStatus.ID).getRepr().getHexString())*/))
 							pipe.get(PipeStatus.ID).ID();
 						pipe.put(PipeStatus.EX,pipe.get(PipeStatus.ID));
 						pipe.put(PipeStatus.ID,null);	
@@ -496,7 +569,8 @@ public class CPU
 				throw new SynchronousException(syncex);
 			
 //DEBUG
-			Main.logger.debug(fpPipe.toString());
+//Main.logger.debug(fpPipe.toString());
+Main.logger.debug("\n"+cpu.getStatus());
 		}
 		catch(JumpException ex)
 		{
@@ -554,6 +628,7 @@ public class CPU
 		}
 		catch(EXNotAvailableException ex)
 		{
+			exStalls++;
 			if(syncex != null)
 				throw new SynchronousException(syncex);			
 		}
@@ -606,6 +681,18 @@ public class CPU
 	public Register getHI(){
 		return HI;
 	}
+	
+	/** Gets the structural stall counter
+	 *@return the memory stall counter
+	 */
+	public int getMemoryStalls(){
+		return memoryStalls;
+	}
+	
+	/** Gets the list of terminating instructions*/
+	public List<String> getTerminatingInstructions(){
+		return terminatingInstructionsOPCodes;
+	}
     
     /** This method resets the CPU components (GPRs, memory,statistics, 
     *   PC, pipeline and Symbol table).
@@ -622,7 +709,9 @@ public class CPU
 		WAWStalls = 0;
 		dividerStalls = 0;
 		funcUnitStalls = 0;
-		memoryStalls = 0; 
+		exStalls=0;
+		memoryStalls = 0;
+		serialNumberSeed=0;
 
 		// Reset dei registri
         for(int i = 0; i < 32; i++)
@@ -633,6 +722,7 @@ public class CPU
 		for(int i=0;i<32;i++)
 			fpr[i].reset();
 
+		
 		LO.reset();
 		HI.reset();
 

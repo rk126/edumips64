@@ -21,11 +21,14 @@
 
 package edumips64.core.is;
 
+
 import edumips64.core.*;
 import edumips64.core.fpu.*;
 import edumips64.utils.*;
 import java.util.*;
 import java.lang.Enum.*;
+//debug
+import edumips64.Main;
 /**Abstract class: it provides all methods and attributes for each instruction type
  * 
  * @author Trubia Massimo, Russo Daniele
@@ -39,20 +42,26 @@ public abstract class Instruction {
     protected String name;
     protected String comment;
     protected static Memory memory=Memory.getInstance();
+    //protected static CPU cpu;
     protected Register[] TR; //is not static because each instruction has got its own registers
     protected RegisterFP[] TRfp;
     protected String fullname;
     protected static boolean enableForwarding=(Boolean)Config.get("forwarding");
     protected String label;
+    protected Long serialNumber;
+    
     
     /** Creates a new instance of Instruction */
     public Instruction() {
-        params=new LinkedList<Integer>();
+	params=new LinkedList<Integer>();
         TR=new Register[5];
 	TRfp=new RegisterFP[5];
         repr=new BitSet32();
         repr.reset(false);
         syntax=new String();
+	//generating a serial number for the current instruction
+	serialNumber=(Long)Config.get("serialNumber");;
+	Config.set("serialNumber",serialNumber+1);
 	//initialization of temporary registers
 	for(int i=0;i<TR.length;i++)
 	{
@@ -305,6 +314,8 @@ public abstract class Instruction {
      */    
     public String getFullName(){return fullname;}
     
+   /** Gets the serial number of this instruction */
+    public long getSerialNumber() { return serialNumber;}
     
     public String toString() 
     {

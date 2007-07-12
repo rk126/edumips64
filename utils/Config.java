@@ -64,6 +64,8 @@ public class Config{
 			config.put("syncexc-terminate",false);
 			config.put("n_step",4);
 			config.put("sleep_interval",100);
+			// seed to generate a serial number for instructions
+			config.put("serialNumber",(long)0);
 		}
 	}
 	public static void setMap(Map<String,Object> newConfig){
