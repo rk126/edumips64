@@ -64,6 +64,13 @@ public class Config{
 			config.put("syncexc-terminate",false);
 			config.put("n_step",4);
 			config.put("sleep_interval",100);
+			
+			//fpu exceptions configuration
+			config.put("INVALID_OPERATION",true);
+			config.put("OVERFLOW",true);
+			config.put("UNDERFLOW",true);
+			config.put("DIVIDE_BY_ZERO",true);
+			
 			// seed to generate a serial number for instructions
 			config.put("serialNumber",(long)0);
 		}

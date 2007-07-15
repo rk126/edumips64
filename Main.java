@@ -155,12 +155,6 @@ public class Main extends JApplet {
             openFile(toOpen);
         }
 	
-// FPU DIAGNOSTICS
-	//deactivating FPInvalidException
-	cpu.setFPExceptions(CPU.FPExceptions.INVALID_OPERATION,false);
-	cpu.setFPExceptions(CPU.FPExceptions.OVERFLOW,false);
-	cpu.setFPExceptions(CPU.FPExceptions.UNDERFLOW,false);
-	cpu.setFPExceptions(CPU.FPExceptions.DIVIDE_BY_ZERO,false);
 	
     }
 

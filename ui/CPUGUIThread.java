@@ -153,6 +153,8 @@ public class CPUGUIThread extends Thread{
 						}
 						catch(SynchronousException ex) {
 							JOptionPane.showMessageDialog(f, CurrentLocale.getString(ex.getCode() + ".Message"), "EduMIPS64 - " + CurrentLocale.getString("EXCEPTION"), JOptionPane.ERROR_MESSAGE);
+							front.updateComponents();
+							front.represent();
 							if(terminate) {
 								haltCPU();
 								break;
@@ -214,6 +216,8 @@ public class CPUGUIThread extends Thread{
 						}
 						catch(SynchronousException ex) {
 							JOptionPane.showMessageDialog(f, CurrentLocale.getString(ex.getCode() + ".Message"), "EduMIPS64 - " + CurrentLocale.getString("EXCEPTION"), JOptionPane.ERROR_MESSAGE);
+							front.updateComponents();
+							front.represent();
 							if(terminate) {
 								haltCPU();
 								break;
