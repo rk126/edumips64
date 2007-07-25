@@ -564,7 +564,7 @@ public class CPU {
 	/** This method performs a single pipeline step
 	 * @throw RAWHazardException when a RAW hazard is detected
 	 */
-	public void step() throws IntegerOverflowException, AddressErrorException, HaltException, IrregularWriteOperationException, StoppedCPUException, MemoryElementNotFoundException, IrregularStringOfBitsException, TwosComplementSumException, SynchronousException, BreakException, FPInvalidOperationException, FPExponentTooLargeException, FPUnderflowException, FPOverflowException, FPDivideByZeroException,WAWException,  MemoryNotAvailableException, FPDividerNotAvailableException,FPFunctionalUnitNotAvailableException {
+	public void step() throws IntegerOverflowException, AddressErrorException, HaltException, IrregularWriteOperationException, StoppedCPUException, MemoryElementNotFoundException, IrregularStringOfBitsException, TwosComplementSumException, SynchronousException, BreakException, FPInvalidOperationException, FPUnderflowException, FPOverflowException, FPDivideByZeroException,WAWException,  MemoryNotAvailableException, FPDividerNotAvailableException,FPFunctionalUnitNotAvailableException {
 		/* The integer "breaking" is used to keep track of the BREAK
 		 * instruction. When the BREAK instruction enters ID, the BreakException
 		 * is thrown. We continue the normal cpu step flow, and at the end of
