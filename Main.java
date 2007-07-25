@@ -22,10 +22,7 @@
  */
 package edumips64;
 
-import edumips64.core.fpu.FPExponentTooLargeException;
-import edumips64.core.fpu.FPInvalidOperationException;
-import edumips64.core.fpu.FPOverflowException;
-import edumips64.core.fpu.FPUnderflowException;
+import edumips64.core.fpu.*;
 import edumips64.img.*;
 import edumips64.core.*;
 import edumips64.core.is.*;
@@ -45,6 +42,8 @@ import javax.imageio.ImageIO;
 
 //FPU diagnostics 
 import java.io.*;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 
 /** Entry point of EduMIPS64
  * @author Andrea Spadaccini, Antonella Scandura, Vanni Rizzo
@@ -155,7 +154,10 @@ public class Main extends JApplet {
             openFile(toOpen);
         }
 	
-	
+//debugging code
+		//BigDecimal bd=new BigDecimal("1e-23");
+		//BigInteger bi=FPInstructionUtils.doubleTo64FixedPoint(bd,CPU.FPRoundingMode.TOWARDS_PLUS_INFINITY);
+		//System.out.println(bi.longValue());
     }
 
     private static void addFrame(String name, JInternalFrame f) {
