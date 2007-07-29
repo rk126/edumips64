@@ -33,7 +33,7 @@ import edumips64.utils.*;
  */
 public class SDC1 extends FPStoring {
 
-	final String OPCODE_VALUE="111101";
+	String OPCODE_VALUE="111101";
 	public SDC1()
 	{
 		super.OPCODE_VALUE = OPCODE_VALUE;

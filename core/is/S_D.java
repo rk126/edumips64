@@ -1,7 +1,7 @@
 /*
- * LDC1.java
+ * S_D.java
  *
- * 27th may 2007
+ * 29th july 2007
  * (c) 2006 EduMips64 project - Trubia Massimo
  *
  * This file is part of the EduMIPS64 project, and is released under the GNU
@@ -25,35 +25,22 @@
 package edumips64.core.is;
 import edumips64.core.*;
 import edumips64.utils.*;
-
-
-/** 
- * <pre>
- *      Format: LDC1 ft, offset(base)
- * Description: To load a doubleword from memory to an FPR
- *   Operation: ft = memory[base+offset]
- *</pre>
-
+/** <pre>
+ *DEPRECATED INSTRUCTION (SDC1 is to be used against S.D)
+ *       Syntax: S.D ft, offset(base)
+ *  Description: memory[base+offset] = ft
+ *               The double value in ft is stored in memory.
+ * </pre>
  */
-class LDC1 extends FPLoading {
-	String OPCODE_VALUE="110111";
-	public LDC1() {
+public class S_D extends SDC1 {
+
+	final String OPCODE_VALUE="111101";
+	public S_D()
+	{
 		super.OPCODE_VALUE = OPCODE_VALUE;
-		this.name="LDC1";
+		this.name="S.D";
 	}
-	public void MEM() throws IrregularStringOfBitsException, MemoryElementNotFoundException, AddressErrorException, IrregularWriteOperationException {
-		super.MEM(); //unlock the fp register in order to avoid WAW hazards
-		//restoring the address from the temporary register
-		long address=TR[OFFSET_PLUS_BASE].getValue();
-		//For the trace file
-		Dinero din=Dinero.getInstance();
-		din.Load(Converter.binToHex(Converter.positiveIntToBin(64,address)),8);
-		
-		MemoryElement memEl = memory.getCell((int)address);
-		//reading from the memory element and saving values on LMD register
-		TR[LMD_REGISTER].setBits(memEl.getBinString(),0);
-		if(enableForwarding) {
-			doWB();
-		}
-	}
+
+
 }
+    
