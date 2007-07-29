@@ -35,108 +35,100 @@ import java.util.*;
  * @author Trubia Massimo, Russo Daniele
  */
 public abstract class ALU_RType extends ALUInstructions {
-    final static int RD_FIELD=0;
-    final static int RS_FIELD=1;
-    final static int RT_FIELD=2;
-    final static int RD_FIELD_INIT=16;
-    final static int RS_FIELD_INIT=6;
-    final static int RT_FIELD_INIT=11;
-    final static int RD_FIELD_LENGTH=5;
-    final static int RS_FIELD_LENGTH=5;
-    final static int RT_FIELD_LENGTH=5; 
-    String OPCODE_VALUE="";
-    final static int OPCODE_VALUE_INIT=26;
-    public ALU_RType() 
-    {
-        syntax="%R,%R,%R";
-        paramCount=3;         
-    }
-
-    public void ID() throws RAWException, IrregularWriteOperationException, IrregularStringOfBitsException {
-        //if source registers are valid passing their own values into temporary registers
-        Register rs=cpu.getRegister(params.get(RS_FIELD));
-        Register rt=cpu.getRegister(params.get(RT_FIELD));
-        if(rs.getWriteSemaphore()>0 || rt.getWriteSemaphore()>0)
-            throw new RAWException();
-        TR[RS_FIELD].setBits(rs.getBinString(),0);
-        TR[RT_FIELD].setBits(rt.getBinString(),0);
-        //locking the destination register
-        Register rd=cpu.getRegister(params.get(RD_FIELD));
-        rd.incrWriteSemaphore(); 
-    }
-
-    public void EX() throws IrregularStringOfBitsException, IntegerOverflowException, TwosComplementSumException,IrregularWriteOperationException,DivisionByZeroException {
-    }
-
-    public void MEM() throws IrregularStringOfBitsException, MemoryElementNotFoundException {
-    }
-
-    public void WB() throws IrregularStringOfBitsException 
-    {  
-	 if(!enableForwarding)
-	    doWB();
-    }
-
-    public void doWB() throws IrregularStringOfBitsException 
-    {
-       //passing result from temporary register to destination register and unlocking it
-        cpu.getRegister(params.get(RD_FIELD)).setBits(TR[RD_FIELD].getBinString(),0);
-        cpu.getRegister(params.get(RD_FIELD)).decrWriteSemaphore();    
-        
-    }
-
-    public void pack() throws IrregularStringOfBitsException 
-    {
-        //conversion of instruction parameters of "params" list to the "repr" form (32 binary value) 
-        repr.setBits(OPCODE_VALUE,OPCODE_VALUE_INIT);
-        repr.setBits(Converter.intToBin(RS_FIELD_LENGTH,params.get(RS_FIELD)),RS_FIELD_INIT);
-        repr.setBits(Converter.intToBin(RT_FIELD_LENGTH,params.get(RT_FIELD)),RT_FIELD_INIT);
-        repr.setBits(Converter.intToBin(RD_FIELD_LENGTH,params.get(RD_FIELD)),RD_FIELD_INIT);
-    }
-    
-    public static void main(String[] args)
-    {
- //DEBUGGING DADD DADDU DSUB DSUBU
-        //DSUB ins=new DSUB();
-        DADD ins=new DADD();
-        //DADDU ins=new DADDU();
-        //SLT ins=new SLT();
-        //SLTU ins=new SLTU();
-        //OR ins=new OR();
-        //DSLL ins=new DSLL();
-        //AND ins=new AND();
-        //DSRL ins=new DSRL();
-        //DSLLV ins=new DSLLV();
-        //DSRLV ins=new DSRLV();
-        //DSRA ins=new DSRA();
-        //DSRAV ins = new DSRAV();
-        
-        List<Integer>params=new Vector<Integer>();
-        int rd=2;
-        int rs=3;
-        int rt=30;
-        params.add(rd);  //destinazione R2
-        params.add(rs);  //sorgente1 R3
-        params.add(rt);  //sorgente2 R4
-        try
-        {
-           cpu.getRegister(rs).writeDoubleWord(82337254775807L); //rs register
-           cpu.getRegister(rt).writeDoubleWord(-76284523455L);     //rt register
-           ins.setParams(params);
-        }
-        catch(IrregularWriteOperationException e)
-        {
+	final static int RD_FIELD=0;
+	final static int RS_FIELD=1;
+	final static int RT_FIELD=2;
+	final static int RD_FIELD_INIT=16;
+	final static int RS_FIELD_INIT=6;
+	final static int RT_FIELD_INIT=11;
+	final static int RD_FIELD_LENGTH=5;
+	final static int RS_FIELD_LENGTH=5;
+	final static int RT_FIELD_LENGTH=5;
+	String OPCODE_VALUE="";
+	final static int OPCODE_VALUE_INIT=26;
+	public ALU_RType() {
+		syntax="%R,%R,%R";
+		paramCount=3;
+	}
+	
+	public void ID() throws RAWException, IrregularWriteOperationException, IrregularStringOfBitsException {
+		//if source registers are valid passing their own values into temporary registers
+		Register rs=cpu.getRegister(params.get(RS_FIELD));
+		Register rt=cpu.getRegister(params.get(RT_FIELD));
+		if(rs.getWriteSemaphore()>0 || rt.getWriteSemaphore()>0)
+			throw new RAWException();
+		TR[RS_FIELD].setBits(rs.getBinString(),0);
+		TR[RT_FIELD].setBits(rt.getBinString(),0);
+		//locking the destination register
+		Register rd=cpu.getRegister(params.get(RD_FIELD));
+		rd.incrWriteSemaphore();
+	}
+	
+	public void EX() throws IrregularStringOfBitsException, IntegerOverflowException, TwosComplementSumException,IrregularWriteOperationException,DivisionByZeroException {
+	}
+	
+	public void MEM() throws IrregularStringOfBitsException, MemoryElementNotFoundException {
+	}
+	
+	public void WB() throws IrregularStringOfBitsException {
+		if(!enableForwarding)
+			doWB();
+	}
+	
+	public void doWB() throws IrregularStringOfBitsException {
+		//passing result from temporary register to destination register and unlocking it
+		cpu.getRegister(params.get(RD_FIELD)).setBits(TR[RD_FIELD].getBinString(),0);
+		cpu.getRegister(params.get(RD_FIELD)).decrWriteSemaphore();
+		
+	}
+	
+	public void pack() throws IrregularStringOfBitsException {
+		//conversion of instruction parameters of "params" list to the "repr" form (32 binary value)
+		repr.setBits(OPCODE_VALUE,OPCODE_VALUE_INIT);
+		repr.setBits(Converter.intToBin(RS_FIELD_LENGTH,params.get(RS_FIELD)),RS_FIELD_INIT);
+		repr.setBits(Converter.intToBin(RT_FIELD_LENGTH,params.get(RT_FIELD)),RT_FIELD_INIT);
+		repr.setBits(Converter.intToBin(RD_FIELD_LENGTH,params.get(RD_FIELD)),RD_FIELD_INIT);
+	}
+	
+	public static void main(String[] args) {
+		//DEBUGGING DADD DADDU DSUB DSUBU
+		//DSUB ins=new DSUB();
+		DADD ins=new DADD();
+		//DADDU ins=new DADDU();
+		//SLT ins=new SLT();
+		//SLTU ins=new SLTU();
+		//OR ins=new OR();
+		//DSLL ins=new DSLL();
+		//AND ins=new AND();
+		//DSRL ins=new DSRL();
+		//DSLLV ins=new DSLLV();
+		//DSRLV ins=new DSRLV();
+		//DSRA ins=new DSRA();
+		//DSRAV ins = new DSRAV();
+		
+		List<Integer>params=new Vector<Integer>();
+		int rd=2;
+		int rs=3;
+		int rt=30;
+		params.add(rd);  //destinazione R2
+		params.add(rs);  //sorgente1 R3
+		params.add(rt);  //sorgente2 R4
+		try {
+			cpu.getRegister(rs).writeDoubleWord(82337254775807L); //rs register
+			cpu.getRegister(rt).writeDoubleWord(-76284523455L);     //rt register
+			ins.setParams(params);
+		} catch(IrregularWriteOperationException e) {
 			e.printStackTrace();
-        }
-        
-        try {
-            ins.pack();
-            ins.ID();
-            ins.EX();
-            ins.WB();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }        
-    }
-    
+		}
+		
+		try {
+			ins.pack();
+			ins.ID();
+			ins.EX();
+			ins.WB();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 }

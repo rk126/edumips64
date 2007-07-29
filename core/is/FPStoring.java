@@ -30,33 +30,26 @@ import edumips64.utils.*;
  *
  * @author Massimo
  */
-public class FPStoring extends FPLDSTInstructions{
-    
-    /** Creates a new instance of Storing */
-    public FPStoring() {
-    }
-
-    public void ID() throws RAWException, IrregularWriteOperationException, IrregularStringOfBitsException, TwosComplementSumException 
-    {
-        //if the base register and the ft register are valid passing value of ft register into a temporary floating point register
-        Register base=cpu.getRegister(params.get(BASE_FIELD));
-        RegisterFP ft=cpu.getRegisterFP(params.get(FT_FIELD));
-        if(base.getWriteSemaphore()>0 || ft.getWriteSemaphore()>0)
-            throw new RAWException();
-        TR[FT_FIELD].setBits(ft.getBinString(),0);
-        //calculating  address (base+offset)
-         long address = base.getValue() + params.get(OFFSET_FIELD);
-        //saving address into a temporary register
-        TR[OFFSET_PLUS_BASE].writeDoubleWord(address);        
-    }
-
-    public void EX() throws IrregularStringOfBitsException, IntegerOverflowException {
-    }
-
-    public void MEM() throws IrregularStringOfBitsException, MemoryElementNotFoundException, AddressErrorException, IrregularWriteOperationException {
-    }
-
-    public void WB() throws IrregularStringOfBitsException {
-    }
-
+public abstract class FPStoring extends FPLDSTInstructions{
+	public void ID() throws RAWException, IrregularWriteOperationException, IrregularStringOfBitsException, TwosComplementSumException {
+		//if the base register and the ft register are valid passing value of ft register into a temporary floating point register
+		Register base=cpu.getRegister(params.get(BASE_FIELD));
+		RegisterFP ft=cpu.getRegisterFP(params.get(FT_FIELD));
+		if(base.getWriteSemaphore()>0 || ft.getWriteSemaphore()>0)
+			throw new RAWException();
+		TR[FT_FIELD].setBits(ft.getBinString(),0);
+		//calculating  address (base+offset)
+		long address = base.getValue() + params.get(OFFSET_FIELD);
+		//saving address into a temporary register
+		TR[OFFSET_PLUS_BASE].writeDoubleWord(address);
+	}
+	
+	public void EX() throws IrregularStringOfBitsException, IntegerOverflowException {
+	}
+	
+	public abstract void MEM() throws IrregularStringOfBitsException, MemoryElementNotFoundException, AddressErrorException, IrregularWriteOperationException;
+	
+	public void WB() throws IrregularStringOfBitsException {
+	}
+	
 }

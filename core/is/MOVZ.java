@@ -37,41 +37,35 @@ import edumips64.utils.*;
  *</pre>
  * @author Trubia Massimo, Russo Daniele
  */
-class MOVZ extends ALU_RType
-{
-    final String OPCODE_VALUE="001010";
-    public MOVZ()
-    {
-    	super.OPCODE_VALUE = OPCODE_VALUE;
-        name="MOVZ";
-    }
-    public void EX() throws IrregularStringOfBitsException,IntegerOverflowException,TwosComplementSumException 
-    {
-        //getting strings from temporary registers
-        String rs=TR[RS_FIELD].getBinString();
-        String rt=TR[RT_FIELD].getBinString();
-        //if the move test will be true the rs value must be written in rd register
-        TR[RD_FIELD].setBits(rs,0);
-        boolean rtbit,diff=false;
-        for(int i=0;i<64;i++)
-        {
-            rtbit=rt.charAt(i)=='1'?true:false;
-            if(diff=rtbit^false)
-            {
-                    //the move test is false because strings are different, the old value must be rewritten in rd
-                    TR[RD_FIELD].setBits(cpu.getRegister(params.get(RD_FIELD)).getBinString(),0);                   
-                    break;
-            }
-        }
-	if(enableForwarding)
-	{
-		doWB();
+class MOVZ extends ALU_RType {
+	final String OPCODE_VALUE="001010";
+	public MOVZ() {
+		super.OPCODE_VALUE = OPCODE_VALUE;
+		name="MOVZ";
+	}
+	public void EX() throws IrregularStringOfBitsException,IntegerOverflowException,TwosComplementSumException {
+		//getting strings from temporary registers
+		String rs=TR[RS_FIELD].getBinString();
+		String rt=TR[RT_FIELD].getBinString();
+		//if the move test will be true the rs value must be written in rd register
+		TR[RD_FIELD].setBits(rs,0);
+		boolean rtbit,diff=false;
+		for(int i=0;i<64;i++) {
+			rtbit=rt.charAt(i)=='1'?true:false;
+			if(diff=rtbit^false) {
+				//the move test is false because strings are different, the old value must be rewritten in rd
+				TR[RD_FIELD].setBits(cpu.getRegister(params.get(RD_FIELD)).getBinString(),0);
+				break;
+			}
+		}
+		if(enableForwarding) {
+			doWB();
+		}
+		
 	}
 	
-    }
-    
-
-
-
-   
+	
+	
+	
+	
 }

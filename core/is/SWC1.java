@@ -28,57 +28,43 @@ import edumips64.core.*;
 import edumips64.utils.*;
 
 
-/** <pre>
- * 
- * </pre>
- * @author Trubia Massimo
+/**
+ *       Syntax: SWC1 ft, offset(base)
+ *  Description: writewordmemory[base+offset] = ft
+ *               To store a word from an FPR to memory
  */
-class SWC1 extends FPStoring
-{
-    final String OPCODE_VALUE="111001";
-    public SWC1()
-    {
-	super.OPCODE_VALUE = OPCODE_VALUE;
-        this.name="SWC1";
-    }
-    
-                     
-    public void MEM() throws IrregularStringOfBitsException,MemoryElementNotFoundException, AddressErrorException, IrregularWriteOperationException
-    { 
-    	
-	try
-	{
-	    //restoring the address from the temporary register
-            long address=TR[OFFSET_PLUS_BASE].getValue();
-            //For the trace file
-            Dinero din=Dinero.getInstance();
-            din.Store(Converter.binToHex(Converter.positiveIntToBin(64,address)),4);
-	    MemoryElement memEl = memory.getCell((int)address);
-            //writing on the memory element the RT register
-	    memEl.writeWord(TR[RT_FIELD].readWord(0), (int) (address%8));
+class SWC1 extends FPStoring {
+	final String OPCODE_VALUE="111001";
+	public SWC1() {
+		super.OPCODE_VALUE = OPCODE_VALUE;
+		this.name="SWC1";
 	}
-	catch(NotAlingException er)
-	{
-	    throw new AddressErrorException();
+	
+	
+	public void MEM() throws IrregularStringOfBitsException,MemoryElementNotFoundException, AddressErrorException, IrregularWriteOperationException {
+		
+		try {
+			//restoring the address from the temporary register
+			long address=TR[OFFSET_PLUS_BASE].getValue();
+			//For the trace file
+			Dinero din=Dinero.getInstance();
+			din.Store(Converter.binToHex(Converter.positiveIntToBin(64,address)),4);
+			MemoryElement memEl = memory.getCell((int)address);
+			//writing on the memory element the RT register
+			memEl.writeWord(TR[RT_FIELD].readWord(0), (int) (address%8));
+		} catch(NotAlingException er) {
+			throw new AddressErrorException();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
 	}
-        catch(Exception e)
-        {
-            e.printStackTrace();
-        }
-   
-    }
-  
-    public void EX() throws IrregularStringOfBitsException, IntegerOverflowException {
-    
-    }
-    
-    public void WB() throws IrregularStringOfBitsException
-    {
-    }
-    
-
-
-  
-
+	
+	public void EX() throws IrregularStringOfBitsException, IntegerOverflowException {
+		
+	}
+	
+	public void WB() throws IrregularStringOfBitsException {
+	}
 }
 

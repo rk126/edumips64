@@ -38,43 +38,37 @@ import edumips64.utils.*;
  * @author Trubia Massimo, Russo Daniele
  *
  */
-class MOVN extends ALU_RType
-{
-    final String OPCODE_VALUE="001011";
-    
-    
-    public MOVN()
-    {
-    	super.OPCODE_VALUE = OPCODE_VALUE;
-        name="MOVN";
-    }
-
-    public void EX() throws IrregularStringOfBitsException,IntegerOverflowException,TwosComplementSumException 
-    {
-        //getting strings from temporary registers
-        String rs=TR[RS_FIELD].getBinString();
-        String rt=TR[RT_FIELD].getBinString();
-        //saving rd value because, if the move test is false, the old value must be rewritten in rd
-        TR[RD_FIELD].setBits(cpu.getRegister(params.get(RD_FIELD)).getBinString(),0);
-        boolean rtbit,diff=false;
-        for(int i=0;i<64;i++)
-        {
-            rtbit=rt.charAt(i)=='1'?true:false;
-            if(diff=rtbit^false)
-            {
-                TR[RD_FIELD].setBits(rs,0);
-                break;
-            }
-        }
-	if(enableForwarding)
-	{
-		doWB();
+class MOVN extends ALU_RType {
+	final String OPCODE_VALUE="001011";
+	
+	
+	public MOVN() {
+		super.OPCODE_VALUE = OPCODE_VALUE;
+		name="MOVN";
 	}
 	
-    }
-    
-
-
-
-   
+	public void EX() throws IrregularStringOfBitsException,IntegerOverflowException,TwosComplementSumException {
+		//getting strings from temporary registers
+		String rs=TR[RS_FIELD].getBinString();
+		String rt=TR[RT_FIELD].getBinString();
+		//saving rd value because, if the move test is false, the old value must be rewritten in rd
+		TR[RD_FIELD].setBits(cpu.getRegister(params.get(RD_FIELD)).getBinString(),0);
+		boolean rtbit,diff=false;
+		for(int i=0;i<64;i++) {
+			rtbit=rt.charAt(i)=='1'?true:false;
+			if(diff=rtbit^false) {
+				TR[RD_FIELD].setBits(rs,0);
+				break;
+			}
+		}
+		if(enableForwarding) {
+			doWB();
+		}
+		
+	}
+	
+	
+	
+	
+	
 }

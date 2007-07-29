@@ -30,47 +30,47 @@ import edumips64.utils.*;
 
 /** This is the base class for loading instruction
  *
- * @author  Trubia Massimo, Russo Daniele
+ * @author  Trubia Massimo
  */
 public abstract class FPLoading extends FPLDSTInstructions{
-    
-    public FPLoading() {
-    }
-
-    public void ID() throws RAWException, IrregularWriteOperationException, IrregularStringOfBitsException, TwosComplementSumException {
-        //if the base register is valid ...
-        Register base=cpu.getRegister(params.get(BASE_FIELD));
-        if(base.getWriteSemaphore()>0)
-            throw new RAWException();
-        //calculating  address (base+offset)
-        long address = base.getValue() + params.get(OFFSET_FIELD);
-        //saving address into a temporary register
-        TR[OFFSET_PLUS_BASE].writeDoubleWord(address);
-        //locking ft register either in write mode or in read mode
-        RegisterFP ft=cpu.getRegisterFP(params.get(FT_FIELD));
-        ft.incrWriteSemaphore();
-	ft.incrReadSemaphore();
-    }
-
-    public void EX() throws IrregularStringOfBitsException, IntegerOverflowException {
-    }
-
-    public void MEM() throws IrregularStringOfBitsException, MemoryElementNotFoundException, AddressErrorException, IrregularWriteOperationException {
-	    //since the load instruction reaches the MEM() stage, the (read) lock can be removed because WB() is reached first by the load instruction
-	    //cpu.getRegisterFP(params.get(FT_FIELD)).decrReadSemaphore();
-    }
-
-    public void WB() throws IrregularStringOfBitsException 
-    {
-	if(!enableForwarding)
-	    doWB();
-    }
-    
-    public void doWB() throws IrregularStringOfBitsException
-    {
-        //passing memory value from temporary LMD register to the destination register and unlocking it
-        cpu.getRegisterFP(params.get(FT_FIELD)).setBits(TR[LMD_REGISTER].getBinString(),0);
-        cpu.getRegisterFP(params.get(FT_FIELD)).decrWriteSemaphore();
-    }
+	
+	public FPLoading() {
+	}
+	
+	public void ID() throws RAWException, IrregularWriteOperationException, IrregularStringOfBitsException, TwosComplementSumException, WAWException {
+		//if the base register is valid ...
+		Register base=cpu.getRegister(params.get(BASE_FIELD));
+		if(base.getWriteSemaphore()>0)
+			throw new RAWException();
+		//calculating  address (base+offset)
+		long address = base.getValue() + params.get(OFFSET_FIELD);
+		//saving address into a temporary register
+		TR[OFFSET_PLUS_BASE].writeDoubleWord(address);
+		//locking ft register either in write mode or in read mode
+		RegisterFP ft=cpu.getRegisterFP(params.get(FT_FIELD));
+		if(ft.getWAWSemaphore()>0)
+			throw new WAWException();
+		ft.incrWriteSemaphore();
+		ft.incrWAWSemaphore();
+	}
+	
+	public void EX() throws IrregularStringOfBitsException, IntegerOverflowException {
+	}
+	
+	public void MEM() throws IrregularStringOfBitsException, MemoryElementNotFoundException, AddressErrorException, IrregularWriteOperationException {
+		//since the load instruction reaches the MEM() stage, the (read) lock can be removed because WB() is reached first by the load instruction
+		cpu.getRegisterFP(params.get(FT_FIELD)).decrWAWSemaphore();
+	}
+	
+	public void WB() throws IrregularStringOfBitsException {
+		if(!enableForwarding)
+			doWB();
+	}
+	
+	public void doWB() throws IrregularStringOfBitsException {
+		//passing memory value from temporary LMD register to the destination register and unlocking it
+		cpu.getRegisterFP(params.get(FT_FIELD)).setBits(TR[LMD_REGISTER].getBinString(),0);
+		cpu.getRegisterFP(params.get(FT_FIELD)).decrWriteSemaphore();
+	}
 }
 
