@@ -85,3 +85,4 @@ public void EX() throws IrregularStringOfBitsException, IntegerOverflowException
           }
       }
 }
+
