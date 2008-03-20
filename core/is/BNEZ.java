@@ -90,5 +90,8 @@ public class BNEZ extends FlowControl_IType {
                       jump(j,offset);
                 }
           }
+        
       }
 }
+
+
