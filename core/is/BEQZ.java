@@ -97,6 +97,3 @@ public class BEQZ extends FlowControl_IType
           }
       }
 }
-
-
-

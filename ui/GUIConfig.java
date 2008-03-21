@@ -409,5 +409,3 @@ public class GUIConfig extends JDialog{
 	}
 
 }
-
-
