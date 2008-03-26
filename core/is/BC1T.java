@@ -67,6 +67,25 @@ public class BC1T extends FPConditionalBranchesInstructions {
 	}
 	
 	
+<<<<<<< .mine
+  }
+public void EX() throws IrregularStringOfBitsException, IntegerOverflowException,IrregularWriteOperationException{
+            
+            if((Boolean)Config.get("BRANCH")){
+              
+              int j =8;
+              BitSet64 bs=new BitSet64();
+              bs.writeHalf(params.get(OFFSET_FIELD));
+              String offset=bs.getBinString();
+		boolean condition = (cpu.getFCSRConditionCode(params.get(CC_FIELD))==1)?true:false;
+		
+                
+                if(condition) {
+                      jump(j,offset);
+                }
+          }
+      }
+}=======
   }
 public void EX() throws IrregularStringOfBitsException, IntegerOverflowException,IrregularWriteOperationException{
             
@@ -87,3 +106,4 @@ public void EX() throws IrregularStringOfBitsException, IntegerOverflowException
 }
 
 
+>>>>>>> .r408
