@@ -1,7 +1,7 @@
 /*
  * B.java
  *
- * Instruction B of the MIPS64 Instruction Set
+ * Instruction B of the MIPS64 Instruction Set 
  * (c) 2007 EduMips64 project - Andrea Milazzo (MancaUSoft) 
  *
  * This file is part of the EduMIPS64 project, and is released under the GNU
