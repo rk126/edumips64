@@ -600,7 +600,6 @@ public class CPU {
 
 		} catch(JumpException ex) {
             try {
-            
                 if(pipe.get(PipeStatus.IF) != null) //rispetto a dimips scambia le load con le IF
                         pipe.get(PipeStatus.IF).IF();
             }
@@ -608,30 +607,14 @@ public class CPU {
 				edumips64.Main.logger.debug("Caught a BREAK after a Jump: ignoring it.");
             }
 
-                        if((Boolean)Config.get("BRANCH")){
-                        
-                        pipe.put(PipeStatus.EX, pipe.get(PipeStatus.ID));
-                        pipe.put(PipeStatus.ID, pipe.get(PipeStatus.IF));
-			pipe.put(PipeStatus.IF, Instruction.buildInstruction("BUBBLE"));
-                        
-			
-			old_pc.writeDoubleWord((pc.getValue()));
-			pc.writeDoubleWord((pc.getValue())+4);
-                
-                        }
-                      
-                        else{
-                        // A J-Type instruction has just modified the Program Counter. We need to
+			// A J-Type instruction has just modified the Program Counter. We need to
 			// put in the IF state the instruction the PC points to
-                        pipe.put(PipeStatus.IF, mem.getInstruction(pc));
+			pipe.put(PipeStatus.IF, mem.getInstruction(pc));
 			pipe.put(PipeStatus.EX, pipe.get(PipeStatus.ID));
 			pipe.put(PipeStatus.ID, Instruction.buildInstruction("BUBBLE"));
 			old_pc.writeDoubleWord((pc.getValue()));
 			pc.writeDoubleWord((pc.getValue())+4);
-                        }
-			
 			if(syncex != null)
-                              
 				throw new SynchronousException(syncex);
 			
 		} catch(RAWException ex) {

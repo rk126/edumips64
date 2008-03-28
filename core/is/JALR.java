@@ -47,35 +47,15 @@ public class JALR extends FlowControl_RType {
 		//saving PC value into a temporary register
 		cpu.getRegister(31).incrWriteSemaphore();  //deadlock !!!
 		TR[PC_VALUE].writeDoubleWord(cpu.getPC().getValue()-4);
-                if((Boolean)Config.get("BRANCH")){
-                  if(enableForwarding) {
-                            doWB();
-                    }
-                  throw new JumpException();
-                
-                }
-                else{
-                  cpu.getPC().setBits(cpu.getRegister(params.get(RS_FIELD)).getBinString(),0);
-                  if(enableForwarding) {
-                          doWB();
-                  }
-                  throw new JumpException();
-                
-                }
-              
-                
-                }
-                
-	
-	
-	public void EX() throws IrregularStringOfBitsException,IntegerOverflowException, IrregularWriteOperationException {
-          
-              if((Boolean)Config.get("BRANCH"))
-                  cpu.getPC().setBits(cpu.getRegister(params.get(RS_FIELD)).getBinString(),0);
-              
-            
+		cpu.getPC().setBits(cpu.getRegister(params.get(RS_FIELD)).getBinString(),0);
+		if(enableForwarding) {
+			doWB();
+		}
+		throw new JumpException();
 	}
 	
+	public void EX() throws IrregularStringOfBitsException,IntegerOverflowException, IrregularWriteOperationException {
+	}
 	
 	public void MEM() throws IrregularStringOfBitsException, MemoryElementNotFoundException {
 	}

@@ -55,55 +55,22 @@ public class BC1T extends FPConditionalBranchesInstructions {
 		String offset=bs.getBinString();
 		
 		if(condition) {
+			String pc_new="";
+			Register pc=cpu.getPC();
+			String pc_old=cpu.getPC().getBinString();
 			
-                if((Boolean)Config.get("BRANCH")){
-                    throw new JumpException();
-                }
-                else{
-                        int i=4;
-                        jump(i,offset);
+			//subtracting 4 to the pc_old temporary variable using bitset64 safe methods
+			BitSet64 bs_temp=new BitSet64();
+			bs_temp.writeDoubleWord(-4);
+			pc_old=InstructionsUtils.twosComplementSum(pc_old,bs_temp.getBinString());
+			
+			//updating program counter
+			pc_new=InstructionsUtils.twosComplementSum(pc_old,offset);
+			pc.setBits(pc_new,0);
+			
 			throw new JumpException();
-                  }
+		}
 	}
 	
 	
-<<<<<<< .mine
-  }
-public void EX() throws IrregularStringOfBitsException, IntegerOverflowException,IrregularWriteOperationException{
-            
-            if((Boolean)Config.get("BRANCH")){
-              
-              int j =8;
-              BitSet64 bs=new BitSet64();
-              bs.writeHalf(params.get(OFFSET_FIELD));
-              String offset=bs.getBinString();
-		boolean condition = (cpu.getFCSRConditionCode(params.get(CC_FIELD))==1)?true:false;
-		
-                
-                if(condition) {
-                      jump(j,offset);
-                }
-          }
-      }
-}=======
-  }
-public void EX() throws IrregularStringOfBitsException, IntegerOverflowException,IrregularWriteOperationException{
-            
-            if((Boolean)Config.get("BRANCH")){
-              
-              int j =8;
-              BitSet64 bs=new BitSet64();
-              bs.writeHalf(params.get(OFFSET_FIELD));
-              String offset=bs.getBinString();
-		boolean condition = (cpu.getFCSRConditionCode(params.get(CC_FIELD))==1)?true:false;
-		
-                
-                if(condition) {
-                      jump(j,offset);
-                }
-          }
-      }
 }
-
-
->>>>>>> .r408
