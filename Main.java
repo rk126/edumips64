@@ -403,7 +403,6 @@ public class Main extends JApplet {
     /** Opens a file. */
     private static void openFile(String file) {
         logger.debug("Trying to open " + file);
-        System.out.println("Trying to open " + file);
         cpu.reset();
 
         try {
@@ -470,7 +469,6 @@ public class Main extends JApplet {
             logger.debug("Error opening " + file);
             new ReportDialog(f,e,CurrentLocale.getString("ERROR"));
         }
-        System.out.println("opened " + file);
     }
 
     /** Tiles windows. */
