@@ -101,24 +101,64 @@ public class GUIFrontend {
 	* This method call the six component's update methods.
 	*/
 	public synchronized void updateComponents(){
-		cycles.update();
-		regs.update();
-		stats.update();
-		pipe.update();
-		data.update();
-		code.update();
+        if(!SwingUtilities.isEventDispatchThread()) {
+            try {
+                SwingUtilities.invokeAndWait(new Runnable() {
+                    public void run() {
+                        cycles.update();
+                        regs.update();
+                        stats.update();
+                        pipe.update();
+                        data.update();
+                        code.update();
+                    }
+                });
+            } catch (InterruptedException e) {
+                edumips64.Main.logger.debug("InterruptedException in GUIFrontend");
+            } catch (java.lang.reflect.InvocationTargetException e) {
+                edumips64.Main.logger.debug("InvocationTargetException in GUIFrontend");
+            }
+        }
+        else {
+            cycles.update();
+            regs.update();
+            stats.update();
+            pipe.update();
+            data.update();
+            code.update();
+        }
 	}
 	
 	/**
 	* This method call the six component's draw methods.
 	*/
 	public synchronized void represent(){
-		cycles.draw();
-		regs.draw();
-		stats.draw();
-		pipe.draw();
-		data.draw();
-		code.draw();
+        if(!SwingUtilities.isEventDispatchThread()) {
+            try {
+                SwingUtilities.invokeAndWait(new Runnable() {
+                    public void run() {
+                        cycles.draw();
+                        regs.draw();
+                        stats.draw();
+                        pipe.draw();
+                        data.draw();
+                        code.draw();
+                    }
+                });
+            } catch (InterruptedException e) {
+                edumips64.Main.logger.debug("InterruptedException in GUIFrontend");
+            } catch (java.lang.reflect.InvocationTargetException e) {
+                edumips64.Main.logger.debug("InvocationTargetException in GUIFrontend");
+            }
+        }
+        else {
+            cycles.draw();
+            regs.draw();
+            stats.draw();
+            pipe.draw();
+            data.draw();
+            code.draw();
+        }
 	}
 
 	
