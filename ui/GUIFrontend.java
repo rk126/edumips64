@@ -41,6 +41,7 @@ public class GUIFrontend {
 	GUIPipeline pipe;
 	GUIData data;
 	GUICode code;	
+	GUInotepad notepad;	
 
     // Array containing the six components, useful to write more compact code
     GUIComponent components[];
@@ -54,14 +55,16 @@ public class GUIFrontend {
 		pipe=new GUIPipeline();
 		data=new GUIData();
 		code=new GUICode();
+        notepad = new GUInotepad();
 		
-        components = new GUIComponent[6];
+        components = new GUIComponent[7];
         components[0] = cycles;
         components[1] = regs;
         components[2] = stats;
         components[3] = pipe;
         components[4] = data;
         components[5] = code;
+        components[6] = notepad;
 	}
 	
 	/**Set the container for the Cycles component.
@@ -83,6 +86,13 @@ public class GUIFrontend {
 	*/
 	public void setStatisticsContainer(Container con){
 		stats.setContainer(con);
+	}
+
+	/**Set the container for the Notepad component.
+	* @param con the container sent by the main program.
+	*/
+	public void setNotepadContainer(Container con){
+		notepad.setContainer(con);
 	}
 	
 	/**Set the container for the Pipeline component.

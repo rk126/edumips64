@@ -40,10 +40,10 @@ import javax.swing.KeyStroke.*;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
-//FPU diagnostics 
-import java.io.*;
-import java.math.BigDecimal;
-import java.math.BigInteger;
+
+import java.io.*; 
+import java.math.BigDecimal; 
+import java.math.BigInteger; 
 
 /** Entry point of EduMIPS64
  * @author Andrea Spadaccini, Antonella Scandura, Vanni Rizzo
@@ -63,8 +63,8 @@ public class Main extends JApplet {
     private static JMenuItem open, reset, exit, single_cycle, run_to, multi_cycle, aboutUs, dinero_tracefile, tile, dinFrontend, manual,settings, stop;
     private static StatusBar sb;
     private static JMenu file, lastfiles, exec, config, window, help, lang, tools;
-    private static JCheckBoxMenuItem lang_en,lang_it, pipeFrameMI, codeFrameMI;
-    private static JCheckBoxMenuItem pipelineJCB, registersJCB, memoryJCB, codeJCB, cyclesJCB, statsJCB, loggerJCB, ioJCB;
+    private static JCheckBoxMenuItem lang_en, lang_it, pipeFrameMI, codeFrameMI;
+    private static JCheckBoxMenuItem notepadJCB, pipelineJCB, registersJCB, memoryJCB, codeJCB, cyclesJCB, statsJCB, loggerJCB, ioJCB;
     private static java.util.List<JCheckBoxMenuItem> frames_menu_items;
 
     // Stuff for choosing colors
@@ -79,7 +79,7 @@ public class Main extends JApplet {
     public static GUIIO ioFrame;
     public static IOManager iom;
 
-    private static JInternalFrame pipeFrame, registersFrame, memoryFrame, codeFrame, cyclesFrame, statsFrame;
+    private static JInternalFrame notepadFrame, pipeFrame, registersFrame, memoryFrame, codeFrame, cyclesFrame, statsFrame;
     private static Map<String, JInternalFrame> mapped_frames;
     private static java.util.List<JInternalFrame> ordered_frames;
 
@@ -97,7 +97,7 @@ public class Main extends JApplet {
                 for(int i = 0; i < args.length; ++i) {
                     if(args[i].compareTo("-f") == 0 || args[i].compareTo("--file") == 0) {
                         if(toOpen == null)
-                            toOpen = args[++i];
+                        toOpen = args[++i];
                         else {
                             // TODO: messaggio d'errore pertinente
                             throw new IndexOutOfBoundsException();
@@ -153,11 +153,6 @@ public class Main extends JApplet {
             resetSimulator(false);
             openFile(toOpen);
         }
-	
-//debugging code
-		//BigDecimal bd=new BigDecimal("1e-23");
-		//BigInteger bi=FPInstructionUtils.doubleTo64FixedPoint(bd,CPU.FPRoundingMode.TOWARDS_PLUS_INFINITY);
-		//System.out.println(bi.longValue());
     }
 
     private static void addFrame(String name, JInternalFrame f) {
@@ -199,6 +194,15 @@ public class Main extends JApplet {
         parser = Parser.getInstance();
 
         // Internal Frames
+	notepadFrame = new JInternalFrame("Notepad",true,false,true,true);
+        notepadFrame.addInternalFrameListener(new InternalFrameAdapter() {
+            public void internalFrameIconified(InternalFrameEvent e) {
+                notepadJCB.setState(false);
+            }
+            public void internalFrameDeiconified(InternalFrameEvent e) {
+                notepadJCB.setState(true);
+            }
+        });
         pipeFrame = new JInternalFrame("Pipeline",true,false,true,true);
         pipeFrame.addInternalFrameListener(new InternalFrameAdapter() {
             public void internalFrameIconified(InternalFrameEvent e) {
@@ -287,7 +291,7 @@ public class Main extends JApplet {
         // --andrea
         mapped_frames = new HashMap<String, JInternalFrame>();
         ordered_frames = new ArrayList<JInternalFrame>();
-
+        addFrame("notepad", notepadFrame);/*AGGIUNTE PIE*/
         addFrame("cycles", cyclesFrame);
         addFrame("registers", registersFrame);
         addFrame("stats", statsFrame);
@@ -306,7 +310,7 @@ public class Main extends JApplet {
         }catch(IOException e){
             e.printStackTrace();
         }
-        
+        front.setNotepadContainer(notepadFrame.getContentPane());
         front.setPipelineContainer(pipeFrame.getContentPane());
         front.setRegistersContainer(registersFrame.getContentPane());
         front.setDataContainer(memoryFrame.getContentPane());
@@ -433,10 +437,10 @@ public class Main extends JApplet {
             logger.debug("Set the status to RUNNING");
 
             // Let's fetch the first instruction
-            synchronized(cgt) {
-                cgt.setSteps(1);
-                cgt.notify();
-            }    
+synchronized(cgt) { 
+	cgt.setSteps(1); 
+	cgt.notify(); 
+}    
             openedFile = file;
             logger.debug("File " + file + " successfully opened");
 			StringTokenizer token = new StringTokenizer(file,File.separator,false);
@@ -576,6 +580,7 @@ public class Main extends JApplet {
         setMenuItem(settings, "Config.ITEM");
         setMenuItem(stop, "MenuItem.STOP");
         setMenuItem(pipelineJCB, "PIPELINE");
+	setMenuItem(notepadJCB, "NOTEPAD");
         setMenuItem(codeJCB, "CODE");
         setMenuItem(cyclesJCB, "CYCLES");
         setMenuItem(memoryJCB, "MEMORY");
@@ -617,6 +622,7 @@ public class Main extends JApplet {
         dinFrontend = new JMenuItem();
         manual = new JMenuItem();
         settings = new JMenuItem();
+	notepadJCB = new JCheckBoxMenuItem();
         pipelineJCB = new JCheckBoxMenuItem();
         codeJCB = new JCheckBoxMenuItem();
         memoryJCB = new JCheckBoxMenuItem();
@@ -821,12 +827,10 @@ public class Main extends JApplet {
         help.add(manual);
         manual.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                /*
-                GUIManual man = new GUIManual(f, CurrentLocale.getString("INTRO_FILENAME"), CurrentLocale.getString("IS_FILENAME"), CurrentLocale.getString("GUI_FILENAME"),CurrentLocale.getString("SYSCALL_FILENAME"));
+                /*GUIManual man = new GUIManual(f, CurrentLocale.getString("INTRO_FILENAME"), CurrentLocale.getString("IS_FILENAME"), CurrentLocale.getString("GUI_FILENAME"),CurrentLocale.getString("SYSCALL_FILENAME"));
                 man.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);    // In order to avoid that closing the manual exits the program
                 man.setVisible(true);
-                */
-                try{
+                */try{
                     edumips64.ui.GUIHelp.showHelp(null, "id");
                 } catch (Exception exx) {
                     new edumips64.ui.ReportDialog(null,exx,"MIAO");
@@ -865,7 +869,21 @@ public class Main extends JApplet {
         window.add(tile);
         window.addSeparator();
 
-        pipelineJCB.setText(CurrentLocale.getString("pipeline".toUpperCase()));
+        notepadJCB.setText(CurrentLocale.getString("notepad".toUpperCase()));
+        notepadJCB.setState(true);
+        notepadJCB.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                boolean cur_state = ((JInternalFrame)mapped_frames.get("notepad")).isIcon();
+                try {
+                    ((JInternalFrame)mapped_frames.get("notepad")).setIcon(!cur_state);
+                }
+                catch(java.beans.PropertyVetoException ex) {}
+            }
+        });
+        frames_menu_items.add(notepadJCB);
+        window.add(notepadJCB);
+	
+	pipelineJCB.setText(CurrentLocale.getString("pipeline".toUpperCase()));
         pipelineJCB.setState(true);
         pipelineJCB.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
