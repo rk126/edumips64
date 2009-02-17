@@ -1,4 +1,4 @@
-JAVAC=gcj -nowarn -Xlint
+JAVAC=javac -nowarn -Xlint
 CLASSPATH=..
 BUILDDIR=.
 MAINVERSION=0
