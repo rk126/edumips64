@@ -87,7 +87,7 @@ public class Main extends JApplet {
   private static java.util.List<JInternalFrame> ordered_frames;
 
   private static String openedFile = null;
-  public static boolean debug_mode = false;
+  public static boolean debug_mode = true;
   private static JDesktopPane desk;
 
   private static void usage() {
