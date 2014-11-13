@@ -90,11 +90,8 @@ public class CPU {
 
   private static CPU cpu;
 
-  private Queue localHistoryTable;
   /** Statistics */
   private int cycles, instructions, RAWStalls, WAWStalls, dividerStalls, funcUnitStalls, memoryStalls, exStalls;
-
-  Map<String, Integer> branchInstructions;
 
   /** Static initializer */
   static {
@@ -122,6 +119,7 @@ public class CPU {
     }
 
     pc = new Register("PC");
+    // logger.info("PC when initialized " + pc.toString());
     old_pc = new Register("Old PC");
     LO = new Register("LO");
     HI = new Register("HI");
@@ -150,11 +148,9 @@ public class CPU {
     knownFPInstructions = conf.getFPArithmeticInstructions();
     terminatingInstructionsOPCodes = conf.getTerminatingInstructions();
 
-    // Branch instructions list initialize
-    branchInstructions = new HashMap<String, Integer>();
-    branchInstructionsInit();
-    // Table initialization
-    localHistoryTable = new LinkedList();
+    // Local History Shift register initialization
+
+    // Local History Table initialization
 
     logger.info("CPU Created.");
   }
@@ -210,14 +206,6 @@ public class CPU {
     pipe.put(PipeStatus.WB, null);
   }
 
-  private void branchInstructionsInit() {
-    	branchInstructions.put("BEQ ", new Integer(0));
-	branchInstructions.put("BEQZ ", new Integer(0));
-	branchInstructions.put("BGEQ ", new Integer(0));
-	branchInstructions.put("B ", new Integer(0));
-	branchInstructions.put("BNE ", new Integer(0));
-	branchInstructions.put("BNEZ ", new Integer(0));
-  }
   public static CPU getInstance() {
     if (cpu == null) {
       cpu = new CPU();
@@ -642,9 +630,14 @@ public class CPU {
         pipe.put(PipeStatus.ID, pipe.get(PipeStatus.IF));
         Instruction next_if = mem.getInstruction(pc);
         logger.info("Fetched new instruction " + next_if);
-        String check_instr = next_if.toString();
-	
-	
+        String[] check_instr = next_if.toString().split("\\s+");
+        // logger.info(pc);
+	// logger.info(check_instr[0]);
+	// logger.info("Instruction " + check_instr[0].compareTo("DADDI"));
+	if (check_instr[0].compareTo("B") == 0 || check_instr[0].compareTo("BEQ") == 0 || check_instr[0].compareTo("BEQZ") == 0 || check_instr[0].compareTo("BNEZ") == 0 || check_instr[0].compareTo("BNE") == 0) {
+		logger.info("Branch Instruction encountered");
+	}
+
 	old_pc.writeDoubleWord((pc.getValue()));
         pc.writeDoubleWord((pc.getValue()) + 4);
         logger.info("New Program Counter value: " + pc.toString());
