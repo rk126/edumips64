@@ -36,4 +36,8 @@ public class ShiftRegister {
         System.out.println("Removing Element " + shiftRegisterValue.removeLast());
         printShiftRegister();
     }
+
+    // long int toBinString() {
+    //      Yet to implement
+    // }
 }
