@@ -61,6 +61,10 @@ public class B extends FlowControl_IType {
     bs_temp.writeDoubleWord(-4);
     pc_old = InstructionsUtils.twosComplementSum(pc_old, bs_temp.getBinString());
 
+    // Updating History Table
+    cpu.addDecisionLocalShiftRegister(ShiftRegister.branchDecision.Taken);
+    cpu.updateLocalHistoryTable(pc);
+
     //updating program counter
     pc_new = InstructionsUtils.twosComplementSum(pc_old, offset);
     pc.setBits(pc_new, 0);

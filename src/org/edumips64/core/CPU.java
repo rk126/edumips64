@@ -93,6 +93,9 @@ public class CPU {
   /** Statistics */
   private int cycles, instructions, RAWStalls, WAWStalls, dividerStalls, funcUnitStalls, memoryStalls, exStalls;
 
+  /** Declaration of localHistoryTable */
+  private HistoryTable localHistoryTable;
+
   /** Static initializer */
   static {
     cpu = null;
@@ -148,9 +151,8 @@ public class CPU {
     knownFPInstructions = conf.getFPArithmeticInstructions();
     terminatingInstructionsOPCodes = conf.getTerminatingInstructions();
 
-    // Local History Shift register initialization
-
     // Local History Table initialization
+    localHistoryTable = new HistoryTable(10);
 
     logger.info("CPU Created.");
   }
@@ -400,6 +402,21 @@ public class CPU {
     return memoryStalls;
   }
 
+  /** Add decision to the shiftRegister inside the
+   * localHistoryTable
+   * @return void
+   */
+  public void addDecisionLocalShiftRegister(ShiftRegister.branchDecision decision) {
+      localHistoryTable.addDecisionToShiftRegister(decision);
+  }
+
+  /** Updates the localHistoryTable initialized in the CPU
+   * @return void
+   */
+  public void updateLocalHistoryTable(Register pc) {
+      localHistoryTable.updateEntryToTable(pc);
+  }
+
   /** This method performs a single pipeline step
   */
   public void step() throws AddressErrorException, HaltException, IrregularWriteOperationException, StoppedCPUException, MemoryElementNotFoundException, IrregularStringOfBitsException, TwosComplementSumException, SynchronousException, BreakException, NotAlignException, WAWException, MemoryNotAvailableException, FPDividerNotAvailableException, FPFunctionalUnitNotAvailableException {
@@ -636,6 +653,7 @@ public class CPU {
 	// logger.info("Instruction " + check_instr[0].compareTo("DADDI"));
 	if (check_instr[0].compareTo("B") == 0 || check_instr[0].compareTo("BEQ") == 0 || check_instr[0].compareTo("BEQZ") == 0 || check_instr[0].compareTo("BNEZ") == 0 || check_instr[0].compareTo("BNE") == 0) {
 		logger.info("Branch Instruction encountered");
+        // logger.info("Updating localHistoryTable during the ID stage of the branch instruction");
 	}
 
 	old_pc.writeDoubleWord((pc.getValue()));

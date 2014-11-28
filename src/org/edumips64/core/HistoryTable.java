@@ -1,8 +1,12 @@
+package org.edumips64.core;
+
+// import org.edumips64.core.*;
 import java.util.*;
 import java.lang.Math;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 import org.edumips64.core.Register;
+import org.edumips64.core.ShiftRegister;
 
 public class HistoryTable {
     private Map<Register, ShiftRegister> historyTableEntries;
@@ -15,14 +19,14 @@ public class HistoryTable {
         // HistoryTable Constructor with bit-size parameter
         // Initialize the current shift register
         currentShiftRegister = new ShiftRegister(bitSize);
-        // Initialize the hashTable
+        // Initialize the hashMap
         historyTableEntries = new HashMap<Register, ShiftRegister>();
         logger.setLevel(Level.ALL);
         logger.info("History Table Initialized");
         numberOfEntries = Math.pow(2, (double) bitSize);
     }
 
-    private void updateEntryToTable(Register pc) {
+    public void updateEntryToTable(Register pc) {
         // Gets called whenever the 10 bit shift register gets updated
         // Adds a new entry if the key i.e. the pc, is not present with the current shift register value
         // Updates an existing key i.e. the pc, with the new value of the current shift register value
@@ -33,10 +37,34 @@ public class HistoryTable {
         else {
             if (historyTableEntries.containsKey(pc)) {
                 // Update existing key with the current Shift register value
-                // if !(historyTableEntries.get(pc).toBinString() == currentShiftRegister.toBinString()) {
-
-                // }
+                if (!(historyTableEntries.get(pc).toBinString() == currentShiftRegister.toBinString())) {
+                    logger.info("Updating History Table");
+                    historyTableEntries.put(pc, currentShiftRegister);
+                }
+                else {
+                    logger.info("History table entry already updated with latest register/shift register pair");
+                }
             }
+            else {
+                // Warning History table doesn't contain any entry
+                logger.warning("Failed to update History Table, as it doesn't contain any entry");
+            }
+        }
+    }
+
+    public void addDecisionToShiftRegister(ShiftRegister.branchDecision decision) {
+        currentShiftRegister.addDecision(decision);
+    }
+
+    public void printHistoryTable() {
+        if (!(historyTableEntries.isEmpty())) {
+            int historyTableSize = historyTableEntries.size();
+            for (int i = 0; i < historyTableSize; i++) {
+                logger.warning("Yet to print History Table entries");
+            }
+        }
+        else {
+            logger.warning("History table is empty, couldn't print the table");
         }
     }
 }

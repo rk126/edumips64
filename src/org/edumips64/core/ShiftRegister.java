@@ -2,17 +2,22 @@
  * This value is found is then stored in the second level indexed by the PC of that
  * branch instruction */
 /* Author - Ramakrishnan Kalyanaraman & Jigar Patel */
+
+package org.edumips64.core;
+
 import java.util.LinkedList;
 
 public class ShiftRegister {
-    public enum branchDecision {Taken, NotTaken, Unknown}
 
+    public enum branchDecision {Taken, NotTaken, Unknown}
     private LinkedList<branchDecision> shiftRegisterValue;
+    private int shiftRegisterSize;
 
     public ShiftRegister(int bitSize) {
         shiftRegisterValue = new LinkedList<branchDecision>();
+        shiftRegisterSize = bitSize;
         ShiftRegisterInit (bitSize);
-        printShiftRegister();
+        // printShiftRegister();
     }
 
     private void ShiftRegisterInit (int bitSz) {
@@ -33,11 +38,31 @@ public class ShiftRegister {
         if (!shiftRegisterValue.isEmpty()) {
             shiftRegisterValue.push(decision);
         }
-        System.out.println("Removing Element " + shiftRegisterValue.removeLast());
-        printShiftRegister();
+        shiftRegisterValue.removeLast();
+        // printShiftRegister();
     }
 
-    // long int toBinString() {
-    //      Yet to implement
-    // }
+    void removeDecision() {
+        if (!shiftRegisterValue.isEmpty()) {
+            shiftRegisterValue.pop();
+        }
+        shiftRegisterValue.addLast(branchDecision.Unknown);
+        // printShiftRegister();
+    }
+
+    String toBinString() {
+        String binString = new String("");
+        for (int i = 0; i < shiftRegisterSize; i++) {
+            if (shiftRegisterValue.get(i) == branchDecision.Unknown) {
+                binString = "X".concat(binString);
+            }
+            else if (shiftRegisterValue.get(i) == branchDecision.Taken) {
+                binString = "1".concat(binString);
+            }
+            else if (shiftRegisterValue.get(i) == branchDecision.NotTaken) {
+                binString = "0".concat(binString);
+            }
+        }
+        return binString;
+    }
 }
