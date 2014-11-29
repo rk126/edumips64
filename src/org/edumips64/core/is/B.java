@@ -65,6 +65,9 @@ public class B extends FlowControl_IType {
     cpu.addDecisionLocalShiftRegister(ShiftRegister.branchDecision.Taken);
     cpu.updateLocalHistoryTable(pc);
 
+    // Printing History Table
+    // cpu.printLocalHistoryTable();
+
     //updating program counter
     pc_new = InstructionsUtils.twosComplementSum(pc_old, offset);
     pc.setBits(pc_new, 0);

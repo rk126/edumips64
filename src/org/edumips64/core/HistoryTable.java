@@ -7,6 +7,8 @@ import java.util.logging.Logger;
 import java.util.logging.Level;
 import org.edumips64.core.Register;
 import org.edumips64.core.ShiftRegister;
+import java.util.Iterator;
+import java.util.Set;
 
 public class HistoryTable {
     private Map<Register, ShiftRegister> historyTableEntries;
@@ -58,9 +60,13 @@ public class HistoryTable {
 
     public void printHistoryTable() {
         if (!(historyTableEntries.isEmpty())) {
-            int historyTableSize = historyTableEntries.size();
-            for (int i = 0; i < historyTableSize; i++) {
-                logger.warning("Yet to print History Table entries");
+            logger.info("Printing History Table");
+            Set<Map.Entry<Register, ShiftRegister>> set = historyTableEntries.entrySet();
+            Iterator<Map.Entry<Register, ShiftRegister>> iterator = set.iterator();
+            while (iterator.hasNext()) {
+                Map.Entry<Register, ShiftRegister> mEntry = iterator.next();
+                System.out.print(mEntry.getKey().toString() + " --> ");
+                System.out.println(mEntry.getValue().toBinString());
             }
         }
         else {

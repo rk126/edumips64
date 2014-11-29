@@ -417,6 +417,14 @@ public class CPU {
       localHistoryTable.updateEntryToTable(pc);
   }
 
+  /** Prints the current localHistoryTable
+   * updated by branch instructions
+   * @return void
+   */
+  public void printLocalHistoryTable() {
+      localHistoryTable.printHistoryTable();
+  }
+
   /** This method performs a single pipeline step
   */
   public void step() throws AddressErrorException, HaltException, IrregularWriteOperationException, StoppedCPUException, MemoryElementNotFoundException, IrregularStringOfBitsException, TwosComplementSumException, SynchronousException, BreakException, NotAlignException, WAWException, MemoryNotAvailableException, FPDividerNotAvailableException, FPFunctionalUnitNotAvailableException {
