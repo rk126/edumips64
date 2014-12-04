@@ -62,6 +62,19 @@ public class BEQZ extends FlowControl_IType {
     boolean condition = rs.equals(zero);
 
     if (condition) {
+      // Updating localShiftRegister with the latest decision
+      cpu.updateLocalHistoryTable(instPC, ShiftRegister.branchDecision.Taken);
+      if (predictedDecision != ShiftRegister.branchDecision.Unknown) {
+          cpu.predictionKnown++;
+          if (predictedDecision == ShiftRegister.branchDecision.Taken) {
+              cpu.predictionSuccessful++;
+          } else {
+              cpu.predictionUnsuccessful++;
+          }
+      } else {
+          cpu.predictionUnknown++;
+      }
+
       String pc_new = "";
       Register pc = cpu.getPC();
       String pc_old = cpu.getPC().getBinString();
@@ -77,8 +90,23 @@ public class BEQZ extends FlowControl_IType {
 
       throw new JumpException();
     }
+    else {
+        // Updating localShiftRegister with the NotTaken Decision
+        cpu.updateLocalHistoryTable(instPC, ShiftRegister.branchDecision.NotTaken);
+        if (predictedDecision != ShiftRegister.branchDecision.Unknown) {
+          cpu.predictionKnown++;
+          if (predictedDecision == ShiftRegister.branchDecision.NotTaken) {
+              cpu.predictionSuccessful++;
+          } else {
+              cpu.predictionUnsuccessful++;
+          }
+      } else {
+          cpu.predictionUnknown++;
+      }
   }
-  public void pack() throws IrregularStringOfBitsException {
+  // Updating localHistory Table
+  }
+    public void pack() throws IrregularStringOfBitsException {
     repr.setBits(OPCODE_VALUE, OPCODE_VALUE_INIT);
     repr.setBits(Converter.intToBin(RS_FIELD_LENGTH, 0/*params.get(RS_FIELD)*/), RS_FIELD_INIT);
     repr.setBits(Converter.intToBin(RT_FIELD_LENGTH, params.get(RS_FIELD) /* 0*/), RT_FIELD_INIT);

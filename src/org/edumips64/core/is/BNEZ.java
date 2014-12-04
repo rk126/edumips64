@@ -60,6 +60,20 @@ public class BNEZ extends FlowControl_IType {
     boolean condition = ! rs.equals(zero);
 
     if (condition) {
+      // Updating local shift register
+      cpu.updateLocalHistoryTable(instPC, ShiftRegister.branchDecision.Taken);
+
+      if (predictedDecision != ShiftRegister.branchDecision.Unknown) {
+          cpu.predictionKnown++;
+          if (predictedDecision == ShiftRegister.branchDecision.Taken) {
+              cpu.predictionSuccessful++;
+          } else {
+              cpu.predictionUnsuccessful++;
+          }
+      } else {
+          cpu.predictionUnknown++;
+      }
+
       String pc_new = "";
       Register pc = cpu.getPC();
       String pc_old = cpu.getPC().getBinString();
@@ -75,6 +89,20 @@ public class BNEZ extends FlowControl_IType {
 
       throw new JumpException();
     }
+    else {
+        // Updating local shift register with decision not taken
+        cpu.updateLocalHistoryTable(instPC, ShiftRegister.branchDecision.NotTaken);
+        if (predictedDecision != ShiftRegister.branchDecision.Unknown) {
+          cpu.predictionKnown++;
+          if (predictedDecision == ShiftRegister.branchDecision.NotTaken) {
+              cpu.predictionSuccessful++;
+          } else {
+              cpu.predictionUnsuccessful++;
+          }
+      } else {
+          cpu.predictionUnknown++;
+      }
+  }
   }
   public void pack() throws IrregularStringOfBitsException {
 

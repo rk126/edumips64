@@ -27,7 +27,7 @@ package org.edumips64.core.is;
 
 import org.edumips64.core.*;
 import org.edumips64.utils.*;
-
+import org.edumips64.core.ShiftRegister;
 
 /**This is the base class for FlowControl instructions
  *
@@ -35,7 +35,17 @@ import org.edumips64.utils.*;
  */
 public abstract class FlowControlInstructions extends Instruction {
   protected static CPU cpu = CPU.getInstance();
+  protected String instPC;
+  protected ShiftRegister.branchDecision predictedDecision;
   public void IF() {
+    instPC = cpu.getLastPC().toString();
+    // Predicting Whether this branch is taken or not
+    predictedDecision = cpu.predictFromLocalHistoryTable(instPC);
+    // System.out.println(predictedDecision);
+    // System.out.println("InstPC: " + instPC);
+    // cpu.printLocalHistoryTable();
+    // System.out.print("Size of the table: ");
+    // System.out.println(cpu.getLocalHistoryTableSize());
     Dinero din = Dinero.getInstance();
 
     try {

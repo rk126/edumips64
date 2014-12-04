@@ -58,6 +58,20 @@ public class BNE extends FlowControl_IType {
     boolean condition = !rs.equals(rt);
 
     if (condition) {
+      // Updating Local Shift Register
+      cpu.updateLocalHistoryTable(instPC, ShiftRegister.branchDecision.Taken);
+
+      if (predictedDecision != ShiftRegister.branchDecision.Unknown) {
+          cpu.predictionKnown++;
+          if (predictedDecision == ShiftRegister.branchDecision.Taken) {
+              cpu.predictionSuccessful++;
+          } else {
+              cpu.predictionUnsuccessful++;
+          }
+      } else {
+          cpu.predictionUnknown++;
+      }
+
       String pc_new = "";
       Register pc = cpu.getPC();
       String pc_old = cpu.getPC().getBinString();
@@ -72,6 +86,20 @@ public class BNE extends FlowControl_IType {
       pc.setBits(pc_new, 0);
 
       throw new JumpException();
+    }
+    else {
+        // Updating Local Shift Register
+        cpu.updateLocalHistoryTable(instPC, ShiftRegister.branchDecision.NotTaken);
+        if (predictedDecision != ShiftRegister.branchDecision.Unknown) {
+          cpu.predictionKnown++;
+          if (predictedDecision == ShiftRegister.branchDecision.NotTaken) {
+              cpu.predictionSuccessful++;
+          } else {
+              cpu.predictionUnsuccessful++;
+          }
+      } else {
+          cpu.predictionUnknown++;
+      }
     }
   }
 

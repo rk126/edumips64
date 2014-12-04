@@ -744,6 +744,12 @@ public class Main extends JApplet {
     file.add(exit);
     exit.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
+        System.out.println("Exiting Simulator");
+        System.out.println("Local branch prediction statistics:");
+        System.out.println("Successful Prediction: " + cpu.predictionSuccessful);
+        System.out.println("Unsuccessful Prediction: " + cpu.predictionUnsuccessful);
+        System.out.println("Known Prediction: " + cpu.predictionKnown);
+        System.out.println("Unknown Prediction: " + cpu.predictionUnknown);
         System.exit(0);
       }
     });

@@ -59,9 +59,28 @@ public class BEQ extends FlowControl_IType {
     boolean condition = rs.equals(rt);
 
     if (condition) {
+      // Updating Local Shift Register
+
+      cpu.updateLocalHistoryTable(instPC, ShiftRegister.branchDecision.Taken);
+
+      if (predictedDecision != ShiftRegister.branchDecision.Unknown) {
+          cpu.predictionKnown++;
+          if (predictedDecision == ShiftRegister.branchDecision.Taken) {
+              cpu.predictionSuccessful++;
+          } else {
+              cpu.predictionUnsuccessful++;
+          }
+      } else {
+          cpu.predictionUnknown++;
+      }
+
       String pc_new = "";
       Register pc = cpu.getPC();
       String pc_old = cpu.getPC().getBinString();
+
+      // System.out.println("PC is " + pc.toString());
+
+      // System.out.println("Old PC is " + cpu.getLastPC().toString());
 
       //subtracting 4 to the pc_old temporary variable using bitset64 safe methods
       BitSet64 bs_temp = new BitSet64();
@@ -71,10 +90,25 @@ public class BEQ extends FlowControl_IType {
       //updating program counter
       pc_new = InstructionsUtils.twosComplementSum(pc_old, offset);
       pc.setBits(pc_new, 0);
+      // System.out.println("PC after adding offset is " + pc.toString());
 
       throw new JumpException();
     }
-  }
-
-
+    else {
+        // Updating Local Shift Register
+        cpu.updateLocalHistoryTable(instPC, ShiftRegister.branchDecision.NotTaken);
+        // Checking if the predicted decision is in accordance of what got taken
+        if (predictedDecision != ShiftRegister.branchDecision.Unknown) {
+          cpu.predictionKnown++;
+          if (predictedDecision == ShiftRegister.branchDecision.NotTaken) {
+              cpu.predictionSuccessful++;
+          } else {
+              cpu.predictionUnsuccessful++;
+          }
+      } else {
+          cpu.predictionUnknown++;
+      }
+    }
+    // Adding decision to the Local History Table
+    }
 }

@@ -62,8 +62,20 @@ public class B extends FlowControl_IType {
     pc_old = InstructionsUtils.twosComplementSum(pc_old, bs_temp.getBinString());
 
     // Updating History Table
-    cpu.addDecisionLocalShiftRegister(ShiftRegister.branchDecision.Taken);
-    cpu.updateLocalHistoryTable(pc);
+    // cpu.addDecisionLocalShiftRegister(ShiftRegister.branchDecision.Taken);
+    cpu.updateLocalHistoryTable(instPC, ShiftRegister.branchDecision.Taken);
+
+    if (predictedDecision != ShiftRegister.branchDecision.Unknown) {
+        cpu.predictionKnown++;
+        if (predictedDecision == ShiftRegister.branchDecision.Taken) {
+            cpu.predictionSuccessful++;
+        } else {
+            cpu.predictionUnsuccessful++;
+        }
+    }
+    else {
+        cpu.predictionUnknown++;
+    }
 
     // Printing History Table
     // cpu.printLocalHistoryTable();

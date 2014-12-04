@@ -96,6 +96,11 @@ public class CPU {
   /** Declaration of localHistoryTable */
   private HistoryTable localHistoryTable;
 
+  public long predictionSuccessful;
+  public long predictionUnsuccessful;
+  public long predictionKnown;
+  public long predictionUnknown;
+
   /** Static initializer */
   static {
     cpu = null;
@@ -153,6 +158,13 @@ public class CPU {
 
     // Local History Table initialization
     localHistoryTable = new HistoryTable(10);
+
+    // Branch prediction statistics
+    predictionSuccessful = 0;
+    predictionUnsuccessful = 0;
+    predictionKnown = 0;
+    predictionUnknown = 0;
+
 
     logger.info("CPU Created.");
   }
@@ -402,28 +414,54 @@ public class CPU {
     return memoryStalls;
   }
 
-  /** Add decision to the shiftRegister inside the
-   * localHistoryTable
-   * @return void
-   */
-  public void addDecisionLocalShiftRegister(ShiftRegister.branchDecision decision) {
-      localHistoryTable.addDecisionToShiftRegister(decision);
-  }
 
   /** Updates the localHistoryTable initialized in the CPU
+   * invoked by branch instructions
    * @return void
    */
-  public void updateLocalHistoryTable(Register pc) {
-      localHistoryTable.updateEntryToTable(pc);
+  public void updateLocalHistoryTable(String pc, ShiftRegister.branchDecision decision) {
+      localHistoryTable.updateEntryToLocalHistoryTable(pc, decision);
+  }
+
+  /** Updates the globalHistoryTable initialized in the CPU
+   * invoked by branch instructions
+   * @return void
+   */
+  // public void updateGlobalHistoryTable(String pc, ShiftRegister.branchDecision decision) {
+  //     globalHistoryTable.updateEntryToTable(pc, decision);
+  // }
+
+  public int getLocalHistoryTableSize() {
+      return localHistoryTable.getSize();
   }
 
   /** Prints the current localHistoryTable
-   * updated by branch instructions
+   * invoked by branch instructions
    * @return void
    */
   public void printLocalHistoryTable() {
       localHistoryTable.printHistoryTable();
   }
+
+  /** Predicts decision from the current localHistoryTable
+   * invoked by branch instructions
+   * @return ShiftRegister.branchDecision
+   */
+  public ShiftRegister.branchDecision predictFromLocalHistoryTable(String pc) {
+      String twoBitDecision = localHistoryTable.getLastTwoDecisionFromTable(pc);
+      if (twoBitDecision.equals("00")) {
+          return ShiftRegister.branchDecision.NotTaken;
+      } else if (twoBitDecision.equals("01")) {
+          return ShiftRegister.branchDecision.NotTaken;
+      } else if (twoBitDecision.equals("10")) {
+          return ShiftRegister.branchDecision.Taken;
+      } else if (twoBitDecision.equals("11")) {
+          return ShiftRegister.branchDecision.Taken;
+      } else {
+          return ShiftRegister.branchDecision.Unknown;
+      }
+  }
+
 
   /** This method performs a single pipeline step
   */
@@ -661,7 +699,6 @@ public class CPU {
 	// logger.info("Instruction " + check_instr[0].compareTo("DADDI"));
 	if (check_instr[0].compareTo("B") == 0 || check_instr[0].compareTo("BEQ") == 0 || check_instr[0].compareTo("BEQZ") == 0 || check_instr[0].compareTo("BNEZ") == 0 || check_instr[0].compareTo("BNE") == 0) {
 		logger.info("Branch Instruction encountered");
-        // logger.info("Updating localHistoryTable during the ID stage of the branch instruction");
 	}
 
 	old_pc.writeDoubleWord((pc.getValue()));
