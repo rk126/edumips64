@@ -1,7 +1,7 @@
 /* The shift register forms the first level in storing the actual history of branch.
  * This value is found is then stored in the second level indexed by the PC of that
  * branch instruction */
-/* Author - Ramakrishnan Kalyanaraman & Jigar Patel */
+/* Author - Ramakrishnan Kalyanaraman */
 
 package org.edumips64.core;
 
