@@ -1,6 +1,6 @@
 /* The saturating counter */
 
-// package org.edumips64.core;
+package org.edumips64.core;
 
 import java.lang.Math;
 
@@ -47,5 +47,9 @@ class SaturatingCounter {
 			System.out.println("Control Shouldn't reach here: " + saturatingCounterValue.toString());
 			return new Integer(-1);
 		}
+	}
+
+	public int getSaturatingCounter() {
+		return saturatingCounterValue;
 	}
 }

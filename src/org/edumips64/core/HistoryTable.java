@@ -33,6 +33,7 @@ public class HistoryTable {
         // Updates an existing key i.e. the pc, with the new value of the current shift register value
         if (historyTableEntries.isEmpty()) {
             // Create a new key-value pair
+            logger.info("History Table empty, adding first entry");
             currentShiftRegister = new ShiftRegister(bufferSize);
             currentShiftRegister.addDecision(decision);
             historyTableEntries.put(pc, currentShiftRegister);
@@ -51,6 +52,21 @@ public class HistoryTable {
                 historyTableEntries.put(pc, currentShiftRegister);
             }
         }
+    }
+
+    public String getDecisionBufferOf(String pc) {
+        if (!historyTableEntries.isEmpty()) {
+            if (historyTableEntries.containsKey(pc)) {
+                String decisionBuffer = new String(historyTableEntries.get(pc).toBinString());
+                return decisionBuffer;
+            }
+        }
+        // Shouldn't reach here
+        // String ret_str = new String("");
+        // for (int i = 0; i < bufferSize; i++) {
+        //     ret_str = ret_str.concat('X');
+        // }
+        return Character.toString('X');
     }
 
     public void printHistoryTable() {
@@ -77,17 +93,17 @@ public class HistoryTable {
         return currentShiftRegister;
     }
 
-    public String getLastTwoDecisionFromTable(String pc) {
-    if (!historyTableEntries.isEmpty()) {
-            if (historyTableEntries.containsKey(pc)) {
-                String sr = historyTableEntries.get(pc).toBinString();
-                String ret_str = "";
-                if (sr.length() > 2) {
-                    ret_str = sr.substring((sr.length() - 2), sr.length());
-                    return ret_str;
-                }
-            }
-        }
-        return "XX";
-    }
+    // public String getLastTwoDecisionFromTable(String pc) {
+    // if (!historyTableEntries.isEmpty()) {
+    //         if (historyTableEntries.containsKey(pc)) {
+    //             String sr = historyTableEntries.get(pc).toBinString();
+    //             String ret_str = "";
+    //             if (sr.length() > 2) {
+    //                 ret_str = sr.substring((sr.length() - 2), sr.length());
+    //                 return ret_str;
+    //             }
+    //         }
+    //     }
+    //     return "XX";
+    // }
 }

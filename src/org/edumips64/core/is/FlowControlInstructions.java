@@ -40,10 +40,10 @@ public abstract class FlowControlInstructions extends Instruction {
   public void IF() {
     instPC = cpu.getLastPC().toString();
     // Predicting Whether this branch is taken or not
-    predictedDecision = cpu.predictFromLocalHistoryTable(instPC);
+    predictedDecision = cpu.predictFromLocalPatternTable(instPC);
     // System.out.println(predictedDecision);
     // System.out.println("InstPC: " + instPC);
-    // cpu.printLocalHistoryTable();
+    // cpu.printLocalTables();
     // System.out.print("Size of the table: ");
     // System.out.println(cpu.getLocalHistoryTableSize());
     Dinero din = Dinero.getInstance();

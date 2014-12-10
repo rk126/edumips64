@@ -96,6 +96,9 @@ public class CPU {
   /** Declaration of localHistoryTable */
   private HistoryTable localHistoryTable;
 
+  /** Declaration of localPatternTable */
+  private PatternTable localPatternTable;
+
   public long predictionSuccessful;
   public long predictionUnsuccessful;
   public long predictionKnown;
@@ -158,6 +161,9 @@ public class CPU {
 
     // Local History Table initialization
     localHistoryTable = new HistoryTable(10);
+
+    // Local Pattern Table initialization
+    localPatternTable = new PatternTable(3, 10);
 
     // Branch prediction statistics
     predictionSuccessful = 0;
@@ -421,6 +427,10 @@ public class CPU {
    */
   public void updateLocalHistoryTable(String pc, ShiftRegister.branchDecision decision) {
       localHistoryTable.updateEntryToLocalHistoryTable(pc, decision);
+      String decisionBuffer = new String(localHistoryTable.getDecisionBufferOf(pc));
+      if (decisionBuffer != Character.toString('X')) {
+        localPatternTable.updateEntryToPatternTable(decisionBuffer, decision);
+      }
   }
 
   /** Updates the globalHistoryTable initialized in the CPU
@@ -439,27 +449,34 @@ public class CPU {
    * invoked by branch instructions
    * @return void
    */
-  public void printLocalHistoryTable() {
+  public void printLocalTables() {
       localHistoryTable.printHistoryTable();
+      localPatternTable.printPatternTable();
   }
 
   /** Predicts decision from the current localHistoryTable
    * invoked by branch instructions
    * @return ShiftRegister.branchDecision
    */
-  public ShiftRegister.branchDecision predictFromLocalHistoryTable(String pc) {
-      String twoBitDecision = localHistoryTable.getLastTwoDecisionFromTable(pc);
-      if (twoBitDecision.equals("00")) {
-          return ShiftRegister.branchDecision.NotTaken;
-      } else if (twoBitDecision.equals("01")) {
-          return ShiftRegister.branchDecision.NotTaken;
-      } else if (twoBitDecision.equals("10")) {
-          return ShiftRegister.branchDecision.Taken;
-      } else if (twoBitDecision.equals("11")) {
-          return ShiftRegister.branchDecision.Taken;
+  public ShiftRegister.branchDecision predictFromLocalPatternTable(String pc) {
+      String decisionBuffer = new String(localHistoryTable.getDecisionBufferOf(pc));
+      if (decisionBuffer != Character.toString('X')) {
+          return localPatternTable.predictBranchDecision(decisionBuffer);
       } else {
-          return ShiftRegister.branchDecision.Unknown;
+        return ShiftRegister.branchDecision.Unknown;
       }
+      // String twoBitDecision = localHistoryTable.getLastTwoDecisionFromTable(pc);
+      // if (twoBitDecision.equals("00")) {
+      //     return ShiftRegister.branchDecision.NotTaken;
+      // } else if (twoBitDecision.equals("01")) {
+      //     return ShiftRegister.branchDecision.NotTaken;
+      // } else if (twoBitDecision.equals("10")) {
+      //     return ShiftRegister.branchDecision.Taken;
+      // } else if (twoBitDecision.equals("11")) {
+      //     return ShiftRegister.branchDecision.Taken;
+      // } else {
+      //     return ShiftRegister.branchDecision.Unknown;
+      // }
   }
 
 
