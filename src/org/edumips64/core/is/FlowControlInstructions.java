@@ -28,6 +28,7 @@ package org.edumips64.core.is;
 import org.edumips64.core.*;
 import org.edumips64.utils.*;
 import org.edumips64.core.ShiftRegister;
+import java.util.logging.Logger;
 
 /**This is the base class for FlowControl instructions
  *
@@ -37,15 +38,18 @@ public abstract class FlowControlInstructions extends Instruction {
   protected static CPU cpu = CPU.getInstance();
   protected String instPC;
   protected ShiftRegister.branchDecision predictedDecision;
+  private static final Logger logger = Logger.getLogger(FlowControlInstructions.class.getName());
   public void IF() {
     instPC = cpu.getLastPC().toString();
     // Predicting Whether this branch is taken or not
-    predictedDecision = cpu.predictFromLocalPatternTable(instPC);
-    // System.out.println(predictedDecision);
-    // System.out.println("InstPC: " + instPC);
-    // cpu.printLocalTables();
-    // System.out.print("Size of the table: ");
-    // System.out.println(cpu.getLocalHistoryTableSize());
+    if (cpu.getSelectGlobalFlag()) {
+      logger.info("Predicting from Global Branch Predictor");
+      predictedDecision = cpu.predictFromGlobalPatternTable();
+    } else {
+      logger.info("Predicting from Local Branch Predictor");
+      predictedDecision = cpu.predictFromLocalPatternTable(instPC);
+    }
+    // cpu.printLocalTables()
     Dinero din = Dinero.getInstance();
 
     try {

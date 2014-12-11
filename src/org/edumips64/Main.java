@@ -87,7 +87,7 @@ public class Main extends JApplet {
   private static java.util.List<JInternalFrame> ordered_frames;
 
   private static String openedFile = null;
-  public static boolean debug_mode = true;
+  public static boolean debug_mode = false;
   private static JDesktopPane desk;
 
   private static void usage() {
@@ -745,11 +745,6 @@ public class Main extends JApplet {
     exit.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         System.out.println("Exiting Simulator");
-        System.out.println("Local branch prediction statistics:");
-        System.out.println("Successful Prediction: " + cpu.predictionSuccessful);
-        System.out.println("Unsuccessful Prediction: " + cpu.predictionUnsuccessful);
-        System.out.println("Known Prediction: " + cpu.predictionKnown);
-        System.out.println("Unknown Prediction: " + cpu.predictionUnknown);
         System.exit(0);
       }
     });
@@ -1092,5 +1087,11 @@ public class Main extends JApplet {
 
   public static void stopPB() {
     sb.stopPB();
+    System.out.println("Tournament branch prediction statistics:");
+    System.out.println("Successful Prediction: " + cpu.predictionSuccessful);
+    System.out.println("Unsuccessful Prediction: " + cpu.predictionUnsuccessful);
+    System.out.println("Known Prediction: " + cpu.predictionKnown);
+    System.out.println("Unknown Prediction: " + cpu.predictionUnknown);
+    cpu.resetBranchPredictionStatistics();
   }
 }

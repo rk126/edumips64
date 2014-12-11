@@ -64,13 +64,24 @@ public class B extends FlowControl_IType {
     // Updating History Table
     // cpu.addDecisionLocalShiftRegister(ShiftRegister.branchDecision.Taken);
     cpu.updateLocalHistoryTable(instPC, ShiftRegister.branchDecision.Taken);
+    cpu.updateGlobalHistoryRegister(ShiftRegister.branchDecision.Taken);
 
     if (predictedDecision != ShiftRegister.branchDecision.Unknown) {
         cpu.predictionKnown++;
         if (predictedDecision == ShiftRegister.branchDecision.Taken) {
             cpu.predictionSuccessful++;
+            if (cpu.getSelectGlobalFlag() == true) {
+              cpu.decrementPredictorSelectionCounter();
+            } else {
+              cpu.incrementPredictorSelectionCounter();
+            }
         } else {
             cpu.predictionUnsuccessful++;
+            if (cpu.getSelectGlobalFlag() == true) {
+              cpu.incrementPredictorSelectionCounter();
+            } else {
+              cpu.decrementPredictorSelectionCounter();
+            }
         }
     }
     else {

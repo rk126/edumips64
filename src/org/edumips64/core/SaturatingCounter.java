@@ -3,6 +3,7 @@
 package org.edumips64.core;
 
 import java.lang.Math;
+import java.util.logging.Logger;
 
 class SaturatingCounter {
 	private Integer saturatingCounterValue;
@@ -10,6 +11,7 @@ class SaturatingCounter {
 	private Integer mask;
 	private Integer lowerBound;
 	private Integer upperBound;
+	private static final Logger logger = Logger.getLogger(SaturatingCounter.class.getName());
 
 	public SaturatingCounter (int bitSize, String init_value) {
 		saturatingCounterSize = new Integer(bitSize);
@@ -18,10 +20,10 @@ class SaturatingCounter {
 		upperBound = new Integer(~lowerBound & mask);
 		if (init_value.length() == bitSize) {
 			saturatingCounterValue = new Integer(Integer.parseInt(init_value) & mask);
-			System.out.println("Initial Saturating counter value: " + saturatingCounterValue.toString());
+			// System.out.println("Initial Saturating counter value: " + saturatingCounterValue.toString());
 		}
 		else {
-			System.out.println("Please check the bit size of the initial value to be loaded in the saturating counter");
+			logger.severe("Please check the bit size of the initial value to be loaded in the saturating counter");
 		}
 		// System.out.println(lowerBound.toString());
 		// System.out.println(upperBound.toString());
@@ -33,7 +35,7 @@ class SaturatingCounter {
 		} else if (saturatingCounterValue.compareTo(upperBound) < 0) {
 			return new Integer(++saturatingCounterValue & mask); 
 		} else {
-			System.out.println("Control Shouldn't reach here: " + saturatingCounterValue.toString());
+			logger.severe("Control Shouldn't reach here: " + saturatingCounterValue.toString());
 			return new Integer(-1);
 		}
 	}
@@ -44,7 +46,7 @@ class SaturatingCounter {
 		} else if (saturatingCounterValue.compareTo(lowerBound) > 0) {
 			return new Integer(--saturatingCounterValue);
 		} else {
-			System.out.println("Control Shouldn't reach here: " + saturatingCounterValue.toString());
+			logger.severe("Control Shouldn't reach here: " + saturatingCounterValue.toString());
 			return new Integer(-1);
 		}
 	}

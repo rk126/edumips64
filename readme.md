@@ -1,3 +1,21 @@
+ECE 4504 Tournament Prediction README:
+
+Please go through the instructions below to get familiar with edumips.
+
+Once you have cloned to the repository then follow the commands:
+
+$ ant standalone-jar
+$ java -jar edumips64-1.3.jar [--debug]
+
+Load a program and you will see the statistics resetted.
+
+Then you have to execute and wait and you will see at the end when the program stops or when you stop, the resulted statistics.
+
+If you run in debug mode you will be able to see the info like which branch prediction is being selected, different data structure getting initialized, etc. But the simulator becomes slow little slow if --debug mode is used.
+
+To see the local Branch History Table and pattern Table at every iterations, uncomment the line no. 52
+
+
 EduMIPS64 README
 ================
 

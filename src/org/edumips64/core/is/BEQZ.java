@@ -64,12 +64,24 @@ public class BEQZ extends FlowControl_IType {
     if (condition) {
       // Updating localShiftRegister with the latest decision
       cpu.updateLocalHistoryTable(instPC, ShiftRegister.branchDecision.Taken);
+      cpu.updateGlobalHistoryRegister(ShiftRegister.branchDecision.Taken);
+
       if (predictedDecision != ShiftRegister.branchDecision.Unknown) {
           cpu.predictionKnown++;
           if (predictedDecision == ShiftRegister.branchDecision.Taken) {
               cpu.predictionSuccessful++;
+              if (cpu.getSelectGlobalFlag() == true) {
+                cpu.decrementPredictorSelectionCounter();
+              } else {
+                cpu.incrementPredictorSelectionCounter();
+              }
           } else {
               cpu.predictionUnsuccessful++;
+              if (cpu.getSelectGlobalFlag() == true) {
+                cpu.incrementPredictorSelectionCounter();
+              } else {
+                cpu.decrementPredictorSelectionCounter();
+              }
           }
       } else {
           cpu.predictionUnknown++;
@@ -93,12 +105,24 @@ public class BEQZ extends FlowControl_IType {
     else {
         // Updating localShiftRegister with the NotTaken Decision
         cpu.updateLocalHistoryTable(instPC, ShiftRegister.branchDecision.NotTaken);
+        cpu.updateGlobalHistoryRegister(ShiftRegister.branchDecision.NotTaken);
+        
         if (predictedDecision != ShiftRegister.branchDecision.Unknown) {
           cpu.predictionKnown++;
           if (predictedDecision == ShiftRegister.branchDecision.NotTaken) {
               cpu.predictionSuccessful++;
+              if (cpu.getSelectGlobalFlag() == true) {
+                cpu.decrementPredictorSelectionCounter();
+              } else {
+                cpu.incrementPredictorSelectionCounter();
+              }
           } else {
               cpu.predictionUnsuccessful++;
+              if (cpu.getSelectGlobalFlag() == true) {
+                cpu.incrementPredictorSelectionCounter();
+              } else {
+                cpu.decrementPredictorSelectionCounter();
+              }
           }
       } else {
           cpu.predictionUnknown++;

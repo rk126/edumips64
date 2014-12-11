@@ -99,6 +99,16 @@ public class CPU {
   /** Declaration of localPatternTable */
   private PatternTable localPatternTable;
 
+  /** Declaration of globalHistoryRegister */
+  private ShiftRegister globalHistoryRegister;
+
+  /** Declaration of globalPatternTable */
+  private PatternTable globalPatternTable;
+
+  private SaturatingCounter predictorSelectionCounter;
+
+  private boolean selectGlobal;
+
   public long predictionSuccessful;
   public long predictionUnsuccessful;
   public long predictionKnown;
@@ -164,6 +174,25 @@ public class CPU {
 
     // Local Pattern Table initialization
     localPatternTable = new PatternTable(3, 10);
+
+    // Global History Register
+    globalHistoryRegister = new ShiftRegister(12);
+
+    // Global Pattern Table initialization
+    globalPatternTable = new PatternTable(2, 12);
+
+    // Global or Local prediction selection saturating counter
+    // '00' -> Strongly take Global Predictor
+    // '01' -> Weakly take Global Predictor
+    // '10' -> Weakly take Local Predictor
+    // '00' -> Strongly take Local Predictor
+    predictorSelectionCounter = new SaturatingCounter(2, "00");
+
+    if (predictorSelectionCounter.getSaturatingCounter() > 1) {
+        selectGlobal = false;
+    } else {
+        selectGlobal = true;
+    }
 
     // Branch prediction statistics
     predictionSuccessful = 0;
@@ -433,6 +462,16 @@ public class CPU {
       }
   }
 
+  /** Updates the globalHistoryRegister initialized in the CPU
+   * invoked by branch instructions
+   * @return void
+  */
+  public void updateGlobalHistoryRegister(ShiftRegister.branchDecision decision) {
+      globalHistoryRegister.addDecision(decision);
+      String decisionBuffer = new String(globalHistoryRegister.toBinString());
+      globalPatternTable.updateEntryToPatternTable(decisionBuffer, decision);
+  }
+
   /** Updates the globalHistoryTable initialized in the CPU
    * invoked by branch instructions
    * @return void
@@ -454,7 +493,7 @@ public class CPU {
       localPatternTable.printPatternTable();
   }
 
-  /** Predicts decision from the current localHistoryTable
+  /** Predicts decision from the current localPatternTable
    * invoked by branch instructions
    * @return ShiftRegister.branchDecision
    */
@@ -465,20 +504,41 @@ public class CPU {
       } else {
         return ShiftRegister.branchDecision.Unknown;
       }
-      // String twoBitDecision = localHistoryTable.getLastTwoDecisionFromTable(pc);
-      // if (twoBitDecision.equals("00")) {
-      //     return ShiftRegister.branchDecision.NotTaken;
-      // } else if (twoBitDecision.equals("01")) {
-      //     return ShiftRegister.branchDecision.NotTaken;
-      // } else if (twoBitDecision.equals("10")) {
-      //     return ShiftRegister.branchDecision.Taken;
-      // } else if (twoBitDecision.equals("11")) {
-      //     return ShiftRegister.branchDecision.Taken;
-      // } else {
-      //     return ShiftRegister.branchDecision.Unknown;
-      // }
   }
 
+  public ShiftRegister.branchDecision predictFromGlobalPatternTable() {
+      String decisionBuffer = new String(globalHistoryRegister.toBinString());
+      return globalPatternTable.predictBranchDecision(decisionBuffer);
+  }
+
+  public void incrementPredictorSelectionCounter () {
+      predictorSelectionCounter.incrementSaturatingCounter();
+      if (predictorSelectionCounter.getSaturatingCounter() > 1) {
+          selectGlobal = false;
+      } else {
+          selectGlobal = true;
+      }
+  }
+
+  public void decrementPredictorSelectionCounter () {
+      predictorSelectionCounter.decrementSaturatingCounter();
+      if (predictorSelectionCounter.getSaturatingCounter() > 1) {
+          selectGlobal = false;
+      } else {
+          selectGlobal = true;
+      }
+  }
+
+  public boolean getSelectGlobalFlag () {
+      return selectGlobal;
+  }
+
+  public void resetBranchPredictionStatistics() {
+      predictionSuccessful = 0;
+      predictionUnsuccessful = 0;
+      predictionKnown = 0;
+      predictionUnknown = 0;
+  }
 
   /** This method performs a single pipeline step
   */
