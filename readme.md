@@ -15,6 +15,17 @@ If you run in debug mode you will be able to see the info like which branch pred
 
 To see the local Branch History Table and pattern Table at every iterations, uncomment the line no. 52
 
+Some of the programs used for getting results are:
+
+1. isort
+2. mysqrt
+3. copyvet50disp
+
+These program available from the follwing link: http://www.edumips.org/attachment/wiki/Upload/Samples-pack-0.1.tar.bz2
+
+4. ricopiavaloriesternirange 
+
+The above program is available from $(CODE_DIRECTORY)/misc/old_tests/examples
 
 EduMIPS64 README
 ================
